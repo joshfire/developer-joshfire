@@ -1,0 +1,15 @@
+<div class='docNavigation'>
+
+  <% if (prev.url.length) { %>
+    <div class='docNavigationPrev'>
+      <a href='<%= prev.url %>'>&larr; <%= prev.title %></a>
+    </div>
+  <% } %>
+  
+  <% if (next.url.length) { %>
+    <div class='docNavigationNext'>
+      <a href='<%= next.url %>'><%= next.title %> &rarr;</a>
+    </div>
+  <% } %>
+
+</div>

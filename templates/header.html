@@ -1,0 +1,39 @@
+<header id="branding" role="banner">
+  <div class="wrapper">
+    <hgroup>
+      <h1 id="site-title"><span><a href="http://joshfire.com" title="Joshfire" rel="home">Joshfire</a></span></h1>
+    </hgroup>
+
+    <nav id="access" role="navigation">
+      <h1 class="section-heading">Main menu</h1>
+      <div class="skip-link screen-reader-text"><a href="#content" title="Skip to content">Skip to content</a></div>
+
+      <div class="menu-topmenu-container">
+          <ul id="menu-topmenu" class="menu">
+            <li id="menu-item-36" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36 <%= getState('selectedPage') == 'index' ? 'current_page_item' : '' %>"><a href="/">Home</a></li>
+
+            <li id="menu-item-241" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-239 <%= getState('selectedPage') == 'doc' ? 'current_page_item' : '' %> menu-item-241"><a href="/doc/">Documentation</a></li>
+            <li id="menu-item-39" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-39 <%= getState('selectedPage') == 'support' ? 'current_page_item' : '' %>"><a href="/support/">Support</a></li>
+           
+          </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="submenu">
+  <div class="wrapper">
+  <!--
+    <nav>
+      <ul id="menu-topmenu" class="menu clearfix">
+        <li id="menu-item-home" class="menu-item menu-item-type-post_type menu-item-object-page <%= getState('selectedPage') == 'index' ? 'current_page_item' : '' %>">
+          <a href="/">Overview</a>
+        </li>
+        <li id="menu-item-templates" class="menu-item menu-item-type-post_type menu-item-object-page <%= getState('selectedPage') == 'templates' ? 'current_page_item' : '' %>">
+          <a href="/doc/latest/templates/">Templates</a>
+        </li>
+        
+      </ul>
+    </nav>
+    -->
+  </div>
+</div>

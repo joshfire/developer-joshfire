@@ -1,0 +1,9 @@
+To launch :
+
+$ fab serve
+
+Then http://localhost:40009/
+
+To publish
+
+$ fab preprod|prod deploy

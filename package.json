@@ -1,0 +1,14 @@
+{
+  "name": "joshfire-developer",
+  "private":true,
+  "version":"0.0.1",
+  "description": "Website for Joshfire Developers",
+  "author": "Sylvain Zimmer <sylvain@joshfire.com>",
+  "dependencies": {
+    "dirty": "0.9.x",
+    "express": "2.3.x",
+    "mkdirp": "0.0.x",
+    "node-uuid": "1.2.x"
+  },
+  "engine": "node 0.4.x"
+}
