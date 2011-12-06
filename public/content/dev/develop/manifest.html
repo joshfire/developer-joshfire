@@ -1,0 +1,124 @@
+<h1>Prepare a manifest file</h1>
+
+<p>All templates must include a top-level manifest file called <code>package.json</code> that describes the template. This manifest file follows the <a href="http://json.org/">JavaScript Object Notation</a> (JSON) format, and borrows parameters from <a href="http://wiki.commonjs.org/wiki/Packages/1.1">CommonJS Packages 1.1</a>.</p>
+
+<p>In <a href="/doc/gettingstarted/intro">Introduction to templates</a>, we saw what a minimal template may look like. The manifest file contains:</p>
+
+<ul>
+  <li>factory-oriented information about the template (<a href="/doc/ref/package#description">description</a>, <a href="/doc/ref/package#keywords">keywords</a>, <a href="/doc/ref/package#family-screenshots">screenshots</a>, <a href="/doc/ref/package#license">license</a>, etc.);</li>
+  <li>description of the datasource inputs of the template (names, numbers, types);</li>
+  <li>definitions of additional template parameters as needed (allows per-application template customization);</li>
+  <li>assertions about devices support and associated entry points.</li>
+</ul>
+
+<p>The possible sections and parameters are described in the <a href="/doc/ref/package">manifest reference</a>.</p>
+
+<h2>Manifest outline</h2>
+
+<p>You may use the following ready-to-fill JSON snippet as starting point for your template manifest. Manifest properties link to the relevant section of the manifest reference for convenience. Text in italic needs to be replaced in your template. Of course, you may need to add or drop properties depending on your needs.</p>
+<pre><code class="json">{
+  "<a href="/doc/ref/package#name">name</a>": "",
+  "<a href="/doc/ref/package#fullName">fullName</a>": "",
+  "<a href="/doc/ref/package#description">description</a>": "",
+  "<a href="/doc/ref/package#version">version</a>": "",
+  "<a href="/doc/ref/package#keywords">keywords</a>": [
+    "",
+    "",
+    ""
+  ]
+  "joshfire": {
+    "<a href="/doc/ref/package#images">images</a>": {
+      "small": "",
+      "big": ""
+    },
+    "<a href="/doc/ref/package#datasources">datasources</a>": {
+      "<em>tabs</em>": {
+        "<a href="/doc/ref/package#datasource-title">title</a>": "",
+        "<a href="/doc/ref/package#datasource-description">description</a>": "",
+        "<a href="/doc/ref/package#datasource-multiple">multiple</a>": <em>true</em>
+      },
+      "<em>news</em>": {
+        "title": "",
+        "description": ""
+      }
+    },
+    "<a href="/doc/ref/package#devices">devices</a>": [
+      {
+        "<a href="/doc/ref/package#family-devices">devices</a>": "<em>phone</em>",
+        "<a href="/doc/ref/package#family-startfile">startfile</a>": "",
+        "<a href="/doc/ref/package#family-images">images</a>": "",
+        "<a href="/doc/ref/package#family-screenshots">screenshots</a>": [
+          "",
+          ""
+        ]
+      },
+      {
+        "devices": "<em>tv</em>",
+        "startfile": "",
+        "images": "",
+        "screenshots": [
+          "",
+          ""
+        ]
+      }
+    ],
+    "<a href="/doc/ref/package#options">options</a>": {
+      "schema": {
+        "abouthtml": {
+          "type": <em>string</em>,
+          "title": ""
+        }
+      },
+      "form": {
+        "datasource.tabs",
+        "datasource.news",
+        {
+          "key": "abouthtml",
+          "type": "textarea"
+        }
+      }
+    }
+  }
+}</code></pre>
+
+
+<h2>Manifest guidelines</h2>
+
+<h3>Describe your template</h3>
+<p>Pay attention to the textual information that describes your template. The <a href="/doc/ref/package#fullname">fullName</a> should capture the purpose of the template in a few short and simple words. Keep in mind that users will only see more details about the template when they select it. Examples of possible fullName values:</p>
+<ul>
+  <li>« Birthday party » for an event template specialized in birthday parties.</li>
+  <li>« Grandma's recipes » for a cooking template with an old-fashioned look-and-feel</li>
+</ul>
+
+<p>Similarly, the <a href="/doc/ref/package#description">description</a> should detail the purpose of the template, its level of support for families of devices as well as the types and numbers of datasources that the template handles. Newlines are allowed. Future versions of the factory may support markup.</p>
+
+<p><a href="/doc/ref/package#keywords">keywords</a> provide yet another descriptive set of words for the template. They will be used to filter out templates based on user input.</p>
+
+<h3>Ensure your template is visually attractive</h3>
+
+<p>Many users will only rely on text descriptions to search and filter templates. Template images and screenshots will be much more important than text to pick up a template in the end. Images are how you will <em>sell</em> your template, and you should pay close attention to images for your template to gain value in users' eyes.</p>
+
+<p>The smaller size of the template <a href="/doc/ref/package#images">images</a> is displayed on the templates selection screen. The bigger size is displayed on the template's details page. In both cases, as much as is practical, the image should convey:</p>
+<ul>
+  <li>the look and feel of the template</li>
+  <li>targeted families of devices</li>
+  <li>datasource types</li>
+</ul>
+
+<p>@@@example</p>
+
+<p><a href="/doc/ref/package#family-screenshots">Screenshots</a> linked from the manifest must be <em>real</em> screenshots taken on a typical device of the underlying family. The factory displays the screenshots in the template's details page.</p>
+
+<p>@@@examples</p>
+
+<p><a href="/doc/ref/package#family-images">Per-family images</a> replace the generic template image when the user moves over or select a specific family for the template. The image has the same size as the large template image <code>700x335</code>. It should typically feature a screenshot of the template on a typical device of the selected family completed with visual clues on the template.</p>
+
+<p>@@@example</p>
+
+<p>Remaining sections of the manifest are covered in other documentation pages:</p>
+<ul>
+  <li><a href="/doc/develop/datasources">Bind to datasources</a></li>
+  <li><a href="/doc/develop/options">Propose more configuration settings</a></li>
+  <li><a href="/doc/develop/">Support multiple devices</a></li>
+</ul>

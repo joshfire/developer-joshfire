@@ -1,0 +1,153 @@
+<h1>Template API reference</h1>
+
+<p>The template API allows a template to access datasources inputs and template configuration settings as set by the user through the factory interface. The template API is exposed by the bootstrap script in <a href="/doc/develop/start">template entry points</a>.</p>
+
+<p>All information is exposed in a global <code>Joshfire.factory.config</code> object.</p>
+
+
+<h2 id="info">Information about datasources</h2>
+
+<h3 id="datasources"><code>Joshfire.factory.config.datasources</code></h3>
+
+<p>Datasources are exposed in the <code>Joshfire.factory.config.datasources</code> object. The names of the object properties are the names of the datasources defined in <code>datasources</code> section of the <a href="/doc/develop/package">template manifest</a> file. The values are instances of <code>datasourceObject</code>, or an array of them if the datasource supports multiple feeds (set with the <code>multiple</code> option in the manifest file).</p>
+
+<p>The following JSON representation of a possible datasources object supposes that the template manifest defines two datasources: <code>"main"</code> and <code>"news"</code>. The <code>"main"</code> datasource supports multiple datasources feeds:</p>
+
+<pre><code class="json">{
+  "main":  [
+    <em>datasourceObject</em>,
+    <em>datasourceObject</em>
+  ],
+  "news" : <em>datasourceObject</em>
+}</code></pre>
+
+<p>@@@ Check the code. Ensure the template does not break if datasources are empty. What happens when the user fails to select one of the datasources?</p>
+
+
+<h3 id="datasourceObject">The <code>datasourceObject</code> object</h3>
+
+<p>A <code>datasourcesourceObject</code> provides the information needed to retrieve the underlying feed.</p>
+
+<pre><code class="json">{
+  "name" : "The Colbert Report",
+  "db" : "youtube",
+  "col" : "video",
+  "config" : {}
+}</code></pre>
+
+<p>Object properties are:</p>
+<dl>
+  <dt><code>name</code></dt>
+  <dd>A string entered by the user in the datasource configuration page that describes the datasource and may be used for display purpose.
+  <br/>For instance: « Latest News ».</dd>
+  <dt><code>db</code></dt>
+  <dd>A string that identifies the datasource provider to contact to retrieve the feed.
+  <br/>For instance: "youtube", "flickr", "twitter".</dd>
+  <dt><code>col</code></dt>
+  <dd>A string that identifies the name of the service to call.
+  <br/>For instance: "video", "picture".</dd>
+  <dt><code>config</code></dt>
+  <dd>Further filtering parameters.
+  <br/>The name/value pairs of the config object are specific to each type of datasource.
+  <br/>For instance: for Youtube, data is filtered by username.</dd>
+</dl>
+
+<p>For more information about datasources and possible values, refer to <a href="/doc/develop/datasources">Dealing with datasources</a>.</p>
+
+
+<h2 id="application-settings">Application configuration settings</h2>
+
+<h3 id="app"><code>Joshfire.factory.config.app</code></h3>
+
+<p>Application configuration settings are exposed in the <code>Joshfire.factory.config.app</code> object. These configuration settings consist of generic purpose parameters such as the application's name, description and logo.</p>
+
+<pre><code class="json">{
+  "name": "The Colbert daily",
+  "description": "Read and watch Colbert's latest news",
+  "icon" : <em>imageObject</em>,
+  "logo": <em>imageObject</em>,
+  "version": "1.0.1"
+}</code></pre>
+
+<p>Object properties are:</p>
+<dl>
+  <dt><code>name</code></dt>
+  <dd>The application title. A string.</dd>
+  <dt><code>description</code></dt>
+  <dd>A string that describes the purpose of the application.</dd>
+  <dt><code>icon</code></dt>
+  <dd>An <code>imageObject</code> that defines the application icon. @@@see factory interface for details.</dd>
+  <dt><code>logo</code></dt>
+  <dd>An <code>imageObject</code> that defines the application logo. @@@see factory interface for details.</dd>
+  <dt><code>version</code></dt>
+  <dd>The version of the application, entered by the user in the factory page.</dd>
+</dl>
+<p>Properties may not be defined when the user did not enter any specific value. Templates must degrade gracefully in the absence of any of these properties.</p>
+
+<h3 id="imageObject">The <code>imageObject</code> object</h3>
+
+<p>An <code>imageObject</code> contains meta-information about an image.</p> 
+<pre><code class="json">{
+  "url" : "http://static.platform.joshfire.com.s3.amazonaws.com/ab/bd7c8178a4fdf43d5a197a8dc92e43/avatar.jpg",
+  "mime: "image/jpeg",
+  "size": 7048,
+  "id: "abbd7c8178a4fdf43d5a197a8dc92e43",
+  "meta" : {
+    "height" : 110,
+    "width" : 180
+  }
+}</code></pre>
+
+<p>Object properties are:</p>
+<dl>
+  <dt><code>url</code></dt>
+  <dd>The URL of the image as a string. Relative links are resolved against the template's top-level directory</dd>
+  <dt><code>mime</code></dt>
+  <dd>The MIME type of the image as a string.
+  <br/>One of <code>image/jpeg</code> or <code>image/png</code>.</dd>
+  <dt><code>size</code></dt>
+  <dd>The size of the image file in bytes.</dd>
+  <dt><code>id</code></dt>
+  <dd>???</dd>
+  <dt><code>meta</code></dt>
+  <dd>Other meta-information about the images. Possibilities are:
+  <ul>
+    <li><code>"height"</code>: the height in pixels.</li>
+    <li><code>"width"</code>: the width in pixels.</li>
+  </ul>
+  </dd>
+</dl>
+
+<h2 id="template-settings">Template configuration settings</h2>
+
+<h3 id="template"><code>Joshfire.factory.config.template</code></h3>
+
+<p>Template configuration settings are exposed in the <code>Joshfire.factory.config.template</code> object.</p>
+
+<pre><code class="json">{
+  "name" : "newspaper",
+  "version" : "0.3.2",
+  "options" : <em>optionObject</em>
+}</code></pre>
+
+<p>Object properties are:</p>
+<dl>
+  <dt><code>name</code></dt>
+  <dd>The template's name</dd>
+  <dt><code>version</code></dt>
+  <dd>The template's version</dd>
+  <dt><code>options</code></dt>
+  <dd>An object that lists additional template configuration parameters.</dd>
+</dl>
+
+<h3 id="optionObject">The <code>optionObject</code> object</h3>
+
+<p>The <code>optionObject</code> exposes the additional parameters for the template specified in the <code>options</code> section of the template's manifest file. See <a href="/doc/develop/options">More configuration settings</a> for details.</p>
+
+<p>The property names of the object are the names of the parameters in the <code>schema</code> subsection of the <code>options</code> section. The property values are the values set by the user for these parameters. Value types depend on the schema.</p>
+
+<h2 id="installed-plugins">Installed plugins</h2>
+
+<p>Information about selected plugins is exposed in the <code>Joshfire.factory.config.plugins</code> object.</p>
+
+<p>TBD.</p>

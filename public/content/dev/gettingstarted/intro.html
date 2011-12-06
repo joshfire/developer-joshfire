@@ -1,0 +1,48 @@
+<h1>Introduction to templates</h1>
+
+<h2>What is a template?</h2>
+
+<p><strong>Templates</strong> play a central role in the factory. Templates impose the layout and functionality of the generated Web application. They impose the types and number of datasources that the user can feed the Web application and what the Web application does with it. Templates also handle user interactions.</p>
+
+<p>Templates may be very different, from generic templates that handle all types of data and define a cross-device interface to specialized templates that focus on rendering a picture feed on TV sets. Templates address a specific user need.</p>
+
+
+<h2>Why develop a template?</h2>
+
+<p>You may wish to develop a template for your own use, for a client project, to sell it to Web applications developers through the factory or for fame. The factory will allow you to do any of these, providing the market place for Web application developers and integration with datasources.</p>
+
+<p><strong>Template developers</strong> play a central role in the ec
+
+
+<h2>Anatomy of a template</h2>
+
+<p>A template consists of:</p>
+<ul>
+  <li>A <a href="/doc/develop/package">manifest file</a> named <code>package.json</code> that describes the properties of the template. The factory uses the information contained in the manifest file to adjust the actions proposed through the user interface. The information exposed to the generated Web application also depends on the contents of the manifest file.</li>
+  <li>One or more <a href="/doc/develop/start">index file(s)</a> (<code>index.html</code> by default) that serves as entry point for the Web application.</li>
+  <li>A set of resources (images, videos, JavaScript code, HTML pages, etc.)</li>
+  <li>The JavaScript logic of the Web application.</li>
+</ul>
+
+<p>A template is intended to be run on client devices and does not include server-side code.</p>
+
+<p>Datasources and configuration settings selected by users are exposed to the template through a <a href="/doc/develop/templateapi">JavaScript API</a>.</p>
+
+<h2>A minimal template</h2>
+
+<p>A minimal "Hello world!" template is a two file package with a static starting point <code>index.html</code> and a manifest file that looks like:</p>
+
+<pre><code class="json">{
+  "name": "hello-world",
+  "fullName": "Hello World!",
+  "version": "0.0.1",
+  "description": "Hello world minimal template. Displays a static 'Hello World!' message.",
+  "joshfire": {
+    "images": {
+      "small": "http://i.imgur.com/sm0MA.png",
+      "big": "http://i.imgur.com/x5NbC.png"
+    }
+  }
+}</code></pre>
+
+<p>Such a minimal template does not support any datasource input and does not encapsulate any JavaScript logic on top of what the factory generates. This example is essentially dull, let's see how to create something more useful!</p>

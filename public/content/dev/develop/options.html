@@ -1,0 +1,54 @@
+<h1>Propose more configuration settings</h1>
+
+<p>Templates may customize the look-and-feel and functionality of the generated Web application based on additional configuration settings. For instance, a template that features recipes of one's grand-mother may ask for the nickname and a picture of the said grand-mother.</p>
+
+<h2>Define additional configuration settings</h2>
+
+<p>The <a href="/doc/ref/package#options">options</a> section in the manifest file specifies additional parameters in the <code>schema</code> subsection and visual hints for the factory for form rendering purpose in the <code>form</code> subsection.</p>
+
+<p>The following manifest code would allow to define a template for the recipes example mentioned above:</p>
+<pre><code class="json">{
+  "name": "grandma-recipes",
+  "fullName": "Grandma's recipes",
+  "version": "0.0.1",
+  "description": "Ideal to list the recipes of your Grandma."
+  "datasources": {
+    "recipes": {
+      "title": "Recipes",
+      "description": "The list of recipes to include.",
+    }
+  }
+  "options": {
+    "schema": {
+      "nickname": {
+        "type": "string",
+        "title": "Grandma's nickname"
+      },
+      "picture": {
+        "type": "string",
+        "title": "A picture of Grandma"
+      }
+    },
+    "form": {
+      "nickname",
+      "picture",
+      "datasource.recipes"
+    }
+  }
+}</code></pre>
+
+
+<h2>Retrieve configuration settings</h2>
+
+<p>From the template's code, configuration settings are exposed in the <code>Joshfire.factory.config.template.options</code> object.</p>
+
+<p>For instance, to access Grandma's nickname and picture defined above from the template's code:</p>
+<pre><code class="javascript">var options = Joshfire.factory.config.template.options;
+var grandma = {};
+grandma.nickname = options.nickname;
+grandma.picture = options.picture;</code></pre>
+
+
+<h2>Configuration types</h2>
+
+<p>@@@ jsonform doc</p>

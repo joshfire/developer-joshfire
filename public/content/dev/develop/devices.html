@@ -1,0 +1,84 @@
+<h1>Support multiple devices</h1>
+
+<h2>Families of devices</h2>
+
+<p>Screen size, user interaction methods, usage may be very different from one class of devices to the other. For instance, mobile phones have a smaller touchscreen, no keyboard or mouse, and are typically used on the go. TVs have larger screens although seen from a distance in a lean-back position.</p>
+
+<p>The factory uses the notion of families to differentiate between classes of devices. Criteria used to differentiate between families are by essence ill-defined. Sure enough, desktops may be used on the go, and TVs may serve in a showroom.</p>
+
+<h3>Phone</h3>
+
+<p>The smartphone you have in your pocket. Main criteria to tell a phone from other types of devices:</p>
+<ul>
+  <li>Small screen, typically <em>320 pixels wide</em></li>
+  <li>User interaction methods: touchscreen, lack of keyboard and mouse</li>
+  <li>Constrained environment: processing power, memory, bandwidth</li>
+  <li>Running on batteries</li>
+  <li>Used on the go</li>
+  <li>May feature sensors and additional devices (e.g. GPS, accelerometer, camera)</li>
+  <li>Less advanced support for Web technologies than desktops</li>
+</ul>
+
+<h3>Tablet</h3>
+
+<p>Basically, you know you have a tablet in your hand and not a phone when the device doesn't fit. Main criteria to tell a tablet from a phone:</p>
+<ul>
+  <li>Larger screen, typically <em>720 pixels wide</em></li>
+  <li>Larger bandwidth available (often used over Wi-Fi)</li>
+</ul>
+
+
+<h3>TV</h3>
+
+<p>The usual family television. Main criteria that identify a TV:</p>
+<ul>
+  <li>Large screen seen from a distance (<em>10 foot user interface</em>)</li>
+  <li>User interaction method: remote controller</li>
+  <li>Constrained environment: processing power, memory</li>
+  <li>Plugged in</li>
+  <li>Used in a lean-back position</li>
+  <li>Less advanced support for Web technologies</li>
+</ul>
+
+<h3>Desktop</h3>
+<p>Your desktop, your laptop, in short the usual personal computer you use to develop your template.</p>
+<ul>
+  <li>Medium-sized screens, e.g. <em>1024 pixels wide</em></li>
+  <li>User interaction methods: keyboard, mouse</li>
+  <li>Plugged in</li>
+  <li>Used for work and leisure</li>
+  <li>Most advanced support for Web technologies</li>
+</ul>
+
+<h3>Object</h3>
+
+<p>The object family features experimental connected objects, including <a href="http://joshfire.com/showcase/">prototypes</a> such as interactive mirrors or connected radios.</p>
+
+<p>The object family may be refined and split in further families at a later stage.</p>
+
+
+<h2>Assert support for families of devices</h2>
+
+<p>Templates apply to all families of devices by default. One of the goals of the factory is to ensure Web applications reach as many devices as possible. It is good practice to ensure your template works well on typical devices of the different families.</p>
+
+<p>Depending on the scenario that your template addresses, it may actually be a good idea to restrict the number of families supported. For instance, a template that exposes a quick « Next agenda item » functionality may only make sense on mobile phones. Similarly, a template that proposes to watch a TV series along with information on the charaters it features could specifically target TVs.</p>
+
+<p>Whatever you decide, you should clarify supported families in the manifest file, adjusting the <a href="/doc/ref/package#devices">devices</a> section.</p>
+
+<p>The following section would assert support for phones and TV:</p>
+<pre><code class="json">"devices": [
+  {
+    "devices": "phone",
+    "startfile": "app/index.phone.html",
+    <em>[...]</em>
+  },
+  {
+    "devices": "tv",
+    "startfile": "app/index.tv.html",
+    <em>[...]</em>
+  }
+]</code></pre>
+
+<p>You may not need to specify a specific template entry point for each supported family. However, please note that the identified family for the user's device is not exposed to the JavaScript code. In short, the only way to take advantage of the the device detection mechanism included in the generated Web application is to use specific template entry points for the families you would like to react on in your code.</p>
+
+<p>Asserting support for a given family of devices does not only mean that your template "works" on typical devices of this family. It means that your template offers a good user experience on these devices. For instance, a template that renders blog posts may well "work" on a TV, but the TV is not a medium where you would expect users to read content, so the template would not propose a good enough experience.</p>
