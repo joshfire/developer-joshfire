@@ -7,53 +7,136 @@
 
 <h2 id="info">Information about datasources</h2>
 
-<h3 id="datasources"><code>Joshfire.factory.config.datasources</code></h3>
+<h3 id="getDataSource"><code>Joshfire.factory.getDataSource</code></h3>
 
-<p>Datasources are exposed in the <code>Joshfire.factory.config.datasources</code> object. The names of the object properties are the names of the datasources defined in <code>datasources</code> section of the <a href="/doc/develop/package">template manifest</a> file. The values are instances of <code>datasourceObject</code>, or an array of them if the datasource supports multiple feeds (set with the <code>multiple</code> option in the manifest file).</p>
+<p>Datasources are returned by the <code>Joshfire.factory.getDataSource</code> function. The function takes as argument the name of the datasource input to return and returns an instance of a <a href="#datasource"><code>datasource</code></a> or an instance of a <a href="#multiDatasource"><code>multiDatasource</code></a> if the datasource supports multiple feeds (set with the <a href="/doc/ref/package#datasource-multiple"><code>multiple</code></a> option in the manifest file).</p>
 
-<p>The following JSON representation of a possible datasources object supposes that the template manifest defines two datasources: <code>"main"</code> and <code>"news"</code>. The <code>"main"</code> datasource supports multiple datasources feeds:</p>
+<p>The datasources names must be those defined in the <a href="/doc/ref/package#datasources">datasources</a> section of the manifest file. The function returns <code>null</code> if the requested datasource is not defined or is not available, for instance because the user did not bind any datasource to the input.</p>
 
-<pre><code class="json">{
-  "main":  [
-    <em>datasourceObject</em>,
-    <em>datasourceObject</em>
-  ],
-  "news" : <em>datasourceObject</em>
-}</code></pre>
+<p>Your template should react gracefully to missing datasources as well as to datasources that do not contain the information you might expect.</p>
 
-<p>@@@ Check the code. Ensure the template does not break if datasources are empty. What happens when the user fails to select one of the datasources?</p>
+<p>The following code retrieves information about datasources <code>main</code> and <code>news</code>:</p>
+<pre><code class="javascript">var f = Joshfire.factory;
+var main = f.getDataSource("main");
+var news = f.getDataSource("news");</code></pre>
+
+<p>Note the function only returns information about the datasource (e.g. name, configuration), not the underlying feed. Use the <a href="#datasource-find"><code>find</code></a> method on returned objects to fetch data.</p>
+
+<p>See <a href="/doc/develop/datasources">Bind to datasources</a> for more information about datasources.</p>
 
 
-<h3 id="datasourceObject">The <code>datasourceObject</code> object</h3>
+<h3 id="datasource">The <code>datasource</code> object</h3>
 
-<p>A <code>datasourcesourceObject</code> provides the information needed to retrieve the underlying feed.</p>
+<p>The <code>datasource</code> object describes a datasource and exposes a <code>find</code> method to retrieve the underlying feed.</p>
 
-<pre><code class="json">{
-  "name" : "The Colbert Report",
-  "db" : "youtube",
-  "col" : "video",
-  "config" : {}
-}</code></pre>
-
-<p>Object properties are:</p>
+<h4 id="datasource-properties">Object properties</h4>
 <dl>
   <dt><code>name</code></dt>
   <dd>A string entered by the user in the datasource configuration page that describes the datasource and may be used for display purpose.
   <br/>For instance: « Latest News ».</dd>
   <dt><code>db</code></dt>
-  <dd>A string that identifies the datasource provider to contact to retrieve the feed.
+  <dd>A string that identifies the datasource provider.
   <br/>For instance: "youtube", "flickr", "twitter".</dd>
   <dt><code>col</code></dt>
-  <dd>A string that identifies the name of the service to call.
+  <dd>A string that identifies the collection type of data entries.
   <br/>For instance: "video", "picture".</dd>
   <dt><code>config</code></dt>
-  <dd>Further filtering parameters.
-  <br/>The name/value pairs of the config object are specific to each type of datasource.
-  <br/>For instance: for Youtube, data is filtered by username.</dd>
+  <dd>Search parameters. The name/value pairs of the config object are specific to each service provider and may evolve over time. The <a href="#datasource-find"><code>find</code></a> method uses this object to build the query sent to the service provider.
+  <br/>For instance: Youtube videos may be filtered by username.</dd>
 </dl>
 
-<p>For more information about datasources and possible values, refer to <a href="/doc/develop/datasources">Dealing with datasources</a>.</p>
+<h4 id="datasource-find">The <code>find</code> method</h4>
 
+<p>Use the <code>find</code> method of a <code>datasource</code> object to retrieve the contents of a datasource.</p>
+
+<p>The method is asynchronous and returns immediately. It takes as arguments additional query parameters and a callback method.</p>
+
+<p>The callback follows the <a href="http://nodejs.org/">Node.js</a> convention so the first argument of each callback method is always an error object, and it is undefined/null if the method was successful. The callback gets called with a <code>data</code> object as its second argument. This object exposes an <code>entries</code> property that contains an array of <a href="#datasource-item">datasource items</a>.</p>
+
+<p>Here is a code example that fetches the content of a datasource and prepare
+<pre><code class="javascript">var news = f.getDataSource("news");
+var datasourceName = news.name;
+var datasourceEntries = null;
+news.find({}, function (err, data) {
+  if (err) {
+    // An error occurred
+    // (network, service unavailable, etc.)
+  }
+  else {
+    // Parse and store resulting data
+    datasourceEntries = <a href="http://documentcloud.github.com/underscore/">_</a>.map(data.entries, function (item, idx) {
+      var process = function (item) {
+        // Process the item to create an entry
+        // that is appropriate for your template
+      }
+      return process(item);
+    });
+  }
+});</code></pre>
+
+<p>The additional query parameters object that must be set as first argument of calls to <code>find</code> is not specified at this point. Please use <code>{}</code> as in the previous example.</p>
+
+<h3 id="multiDatasource">The <code>multiDatasource</code> object</h3>
+
+<p>The <code>getDataSource</code> function returns a <code>multiDatasource</code> object when the datasource input accepts multiple datasource feeds and when the user actually bound the input to multiple datasource feeds through the factory.</p>
+
+<p>The object exposes one property <code>children</code>, an array of <code>datasource</code> objects.</p>
+
+<p>The object also exposes the same <a href="#datasource-find"><code>find</code></a> method as the <code>datasource</code> object. Use that function to retrieve the agglomeration of the different feeds that compose the object.</p>
+
+<p>Thus, from your template's point of view, whether <code>getDataSource</code> returns a <code>datasource</code> object or a <code>multiDatasource</code> object is transparent for search purpose.</p>
+
+
+<h3 id="datasource-item">The <code>datasource item</code> object</h3>
+
+<p>The properties of a <code>datasource item</code> object depend on the underlying datasource. Whenever possible and practical, properties match terms of the Dublin Core Metadata Initiate defined in the <a href="http://dublincore.org/documents/dcmi-terms/">DCMI Medata Terms</a> specification.</p>
+
+<p>Your template should not rely on specific properties. It should rather be very flexible in the types of objects it handles, or ignore those it cannot process. Also, bear in mind that the factory allows users to define a datasource feed as the union of atomic datasource feeds. Thus, there is no guarantee that all datasource items will be of the same type.</p>
+
+<p>Usual properties are (in alphabetic order):</p>
+<dl>
+  <dt><a href="http://dublincore.org/documents/dcmi-terms/#terms-abstract"><code>abstract</code></a></dt>
+  <dd>A summary of the item. No maximum length defined, the abstract should be one paragraph long in most cases.</dd>
+
+  <dt><a href="http://dublincore.org/documents/dcmi-terms/#terms-date"><code>date</code></a></dt>
+  <dd>The publication date of the item.
+  <br/>A string that follows the @@@ format.</dd>
+
+  <dt><a href="http://dublincore.org/documents/dcmi-terms/#terms-identifier"><code>identifier</code></a></dt>
+  <dd>An identification number for the item. A string.
+  <br/>The identifier is unique within an items list returned by a call to <code>find</code> but not necessarily unique across calls.</dd>
+
+  <dt><code>image</code></dt>
+  <dd>A link to a thumbnail image that represents the item.</dd>
+
+  <dt><code>photo</code></dt>
+  <dd>A link to the (potentially large) main image featured in the item. The property is typically defined when the item type is <code>picture</code>.</dd>
+
+  <dt><a href="http://dublincore.org/documents/dcmi-terms/#elements-subject"><code>subject</code></a></dt>
+  <dd>The main topic of the item. A short string.</dd>
+
+  <dt><a href="http://dublincore.org/documents/dcmi-terms/#elements-title"><code>title</code></a></dt>
+  <dd>The title of the item, defined as a short string.</dd>
+
+  <dt><a href="http://dublincore.org/documents/dcmi-terms/#elements-type"><code>type</code></a></dt>
+  <dd>The nature or genre of the item. Possible values:
+  <br/>
+  <ul>
+    <li>text</li>
+    <li>picture</li>
+    <li>video</li>
+    <li>event</li>
+  </ul>
+  The list will be completed over time.
+  <br/>Note the factory does not necessarily follow the <a href="http://dublincore.org/documents/dcmi-type-vocabulary/">DCMI type vocabulary</a>, preferring "video" over "MovingImage" and "picture" over "StillImage".</dd>
+
+  <dt><code>url</code></dt>
+  <dd>A link to the source of the item on the Web.
+  <br/>For instance, the property would point to the Flickr page that details a picture when the item features a Flickr picture.</dd>
+
+  <dt><code>video</code></dt>
+  <dd>A link to the main video featured in the item. The property is typically defined when the item type is <code>video</code>.</dd>
+</dl>
 
 <h2 id="application-settings">Application configuration settings</h2>
 
@@ -76,25 +159,30 @@
   <dt><code>description</code></dt>
   <dd>A string that describes the purpose of the application.</dd>
   <dt><code>icon</code></dt>
-  <dd>An <code>imageObject</code> that defines the application icon. @@@see factory interface for details.</dd>
+  <dd>An <code>imageObject</code> used as icon in application stores and application icon.
+  <br/>Image size: <code>1024x1024</code>.
+  <br/>32-bit PNG or JPEG.</dd>
   <dt><code>logo</code></dt>
-  <dd>An <code>imageObject</code> that defines the application logo. @@@see factory interface for details.</dd>
+  <dd>An <code>imageObject</code> that describes the logo of the application.
+  <br/>Image width: <code>2048 pixels</code>. Portrait mode.
+  <br/>32-bit PNG on a transparent background.</dd>
   <dt><code>version</code></dt>
   <dd>The version of the application, entered by the user in the factory page.</dd>
 </dl>
+<p>Future versions of the factory may expose an API to retrieve the application's logos and images at any specific image size.</p>
 <p>Properties may not be defined when the user did not enter any specific value. Templates must degrade gracefully in the absence of any of these properties.</p>
 
 <h3 id="imageObject">The <code>imageObject</code> object</h3>
 
 <p>An <code>imageObject</code> contains meta-information about an image.</p> 
 <pre><code class="json">{
-  "url" : "http://static.platform.joshfire.com.s3.amazonaws.com/ab/bd7c8178a4fdf43d5a197a8dc92e43/avatar.jpg",
+"url" : "http://static.platform.joshfire.com.s3.amazonaws.com/ab/bd7c8178a4fdf43d5a197a8dc92e43/avatar.jpg",
   "mime: "image/jpeg",
   "size": 7048,
-  "id: "abbd7c8178a4fdf43d5a197a8dc92e43",
+  "id: "bd7c8178a4fdf43d5a197a8dc92e43",
   "meta" : {
-    "height" : 110,
-    "width" : 180
+    "width" : 180,
+    "height" : 110
   }
 }</code></pre>
 
@@ -108,12 +196,12 @@
   <dt><code>size</code></dt>
   <dd>The size of the image file in bytes.</dd>
   <dt><code>id</code></dt>
-  <dd>???</dd>
+  <dd>ID of the object for the factory. Globally unique across images.</dd>
   <dt><code>meta</code></dt>
   <dd>Other meta-information about the images. Possibilities are:
   <ul>
-    <li><code>"height"</code>: the height in pixels.</li>
     <li><code>"width"</code>: the width in pixels.</li>
+    <li><code>"height"</code>: the height in pixels.</li>
   </ul>
   </dd>
 </dl>
@@ -142,7 +230,7 @@
 
 <h3 id="optionObject">The <code>optionObject</code> object</h3>
 
-<p>The <code>optionObject</code> exposes the additional parameters for the template specified in the <code>options</code> section of the template's manifest file. See <a href="/doc/develop/options">More configuration settings</a> for details.</p>
+<p>The <code>optionObject</code> exposes the additional parameters for the template specified in the <code>options</code> section of the template's manifest file. See <a href="/doc/develop/options">Propose more configuration settings</a> for details.</p>
 
 <p>The property names of the object are the names of the parameters in the <code>schema</code> subsection of the <code>options</code> section. The property values are the values set by the user for these parameters. Value types depend on the schema.</p>
 
@@ -151,3 +239,16 @@
 <p>Information about selected plugins is exposed in the <code>Joshfire.factory.config.plugins</code> object.</p>
 
 <p>TBD.</p>
+
+
+
+<p>The following JSON representation of a possible <code>datasources</code> object supposes that the template manifest defines two datasources: <code>main</code> and <code>news</code>. The <code>main</code> datasource supports multiple datasources feeds:</p>
+
+<pre><code class="json">{
+  "main":  [
+    <em>datasourceObject</em>,
+    <em>datasourceObject</em>
+  ],
+  "news" : <em>datasourceObject</em>
+}</code></pre>
+

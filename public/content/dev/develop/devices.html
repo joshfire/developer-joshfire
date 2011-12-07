@@ -52,18 +52,20 @@
 
 <h3>Object</h3>
 
-<p>The object family features experimental connected objects, including <a href="http://joshfire.com/showcase/">prototypes</a> such as interactive mirrors or connected radios.</p>
+<p>The object family features experimental connected objects, including <a href="http://joshfire.com/showcase/">prototypes</a> such as interactive mirrors or connected radios. Experimental objects may or may not have a screen, a mouse or a battery. What binds them together is that they can run Web applications.</p>
 
-<p>The object family may be refined and split in further families at a later stage.</p>
+<p>Future versions of the factory may refine the object family, in particular to introduce additional levels.</p>
 
 
 <h2>Assert support for families of devices</h2>
 
-<p>Templates apply to all families of devices by default. One of the goals of the factory is to ensure Web applications reach as many devices as possible. It is good practice to ensure your template works well on typical devices of the different families.</p>
+<p>Templates apply to all families of devices by default. One of the goals of the factory is to ensure Web applications reach users whereever they are regardless of the device they use. It is good practice to ensure your template works well on typical devices of the different families.</p>
 
-<p>Depending on the scenario that your template addresses, it may actually be a good idea to restrict the number of families supported. For instance, a template that exposes a quick « Next agenda item » functionality may only make sense on mobile phones. Similarly, a template that proposes to watch a TV series along with information on the charaters it features could specifically target TVs.</p>
+<p>That said, depending on the scenario that your template addresses, it may actually be a good idea to support only a restricted set of families. For instance, a template that exposes a quick « Next agenda item » functionality may only make sense on mobile phones. Similarly, a template that proposes to watch a TV series along with information on the charaters it features could specifically target TVs.</p>
 
-<p>Whatever you decide, you should clarify supported families in the manifest file, adjusting the <a href="/doc/ref/package#devices">devices</a> section.</p>
+<p>Asserting support for a given family of devices does not only mean that your template "works" on typical devices of this family. It means that your template offers a good user experience on these devices. For instance, a template that renders blog posts may well "work" on a TV, but the TV is not a medium where you would expect users to read content, so the template would not propose a good enough experience.</p>
+
+<p>Whatever you decide, you should clarify supported families in the manifest file, adjusting the <a href="/doc/ref/package#devices">devices</a> section and the <a href="/doc/ref/package#description">description</a> of your template.</p>
 
 <p>The following section would assert support for phones and TV:</p>
 <pre><code class="json">"devices": [
@@ -79,6 +81,33 @@
   }
 ]</code></pre>
 
-<p>You may not need to specify a specific template entry point for each supported family. However, please note that the identified family for the user's device is not exposed to the JavaScript code. In short, the only way to take advantage of the the device detection mechanism included in the generated Web application is to use specific template entry points for the families you would like to react on in your code.</p>
+<p>The same <a href="/doc/develop/start">template entry point</a> may be used for different families of devices. Nevertheless, please note that the device's family identified when the Web application starts is not exposed to the JavaScript code. In other words, the only way to run family specific code in your template that relies on the device detection mechanism included in the Web application is to use specific template entry points for the families.</p>
 
-<p>Asserting support for a given family of devices does not only mean that your template "works" on typical devices of this family. It means that your template offers a good user experience on these devices. For instance, a template that renders blog posts may well "work" on a TV, but the TV is not a medium where you would expect users to read content, so the template would not propose a good enough experience.</p>
+<p>For instance, the template entry point for phones may look like:</p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    <em>[...]</em>
+  &lt;/head&gt;
+  &lt;body&gt;
+    <em>[...]</em>
+    &lt;script type="text/javascript"&gt;
+      var family = "phone";
+      <em>[...]</em>
+    &lt;/script&gt;
+    &lt;script type="text/javascript"&gt;
+      // Common script included in all entry points
+      if (family === "phone") {
+        // Phone specific code here
+      }
+      else if (family === "tv") {
+        // TV specific code here
+      }
+      else {
+        // Other families
+      }
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt; 
+</code></pre>
+

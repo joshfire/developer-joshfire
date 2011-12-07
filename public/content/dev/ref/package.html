@@ -9,7 +9,6 @@
 <p>Generic description parameters are defined as top level name/value pairs in the manifest. Parameters that are specific to the factory are defined under the namespace <code>joshfire</code>. Parameter names are case-sensitive.</p>
 
 <p>The generic structure of a manifest file (fake values):</p>
-<p>@@@add license, author and other potentially relevant properties.</p>
 <pre><code class="json">{
   "<a href="#name">name</a>": "my-template",
   "<a href="#fullName">fullName</a>": "My own shiny template",
@@ -19,7 +18,27 @@
     "ego",
     "my",
     "shiny"
+  ],
+  "<a href="#contributors">contributors</a>": [
+    {
+      "name": "Super Ego",
+      "email": "superego@example.net",
+      "web": "http://example.net"
+    }
   ]
+  "<a href="#maintainers">maintainers</a>": [
+    {
+      "name": "Super Ego",
+      "email": "superego@example.net",
+      "web": "http://example.net"
+    }
+  ],
+  "<a href="#licenses">licenses</a>": [
+    {
+      "type": "MIT",
+      "url": "http://example.net/license/MIT"
+    }
+  ],
   "joshfire": {
     "<a href="#images">images</a>": {
       "small": "img/small.png",
@@ -30,10 +49,6 @@
         "<a href="#datasource-title">title</a>": "Main menu tabs",
         "<a href="#datasource-description">description</a>": "Up to 6 tabs that compose the menu of the application",
         "<a href="#datasource-multiple">multiple</a>": <em>true</em>
-      },
-      "<em>feed</em>": {
-        "title": "My feed",
-        "description": "The feed of my social activity. Union of feeds welcome!"
       }
     },
     "<a href="#devices">devices</a>": [
@@ -44,15 +59,6 @@
         "<a href="#family-screenshots">screenshots</a>": [
           "img/phone/screen1.png",
           "img/phone/screen2.png"
-        ]
-      },
-      {
-        "devices": "<em>tv</em>",
-        "startfile": "index.tv.html",
-        "images": "img/tv/image.png",
-        "screenshots": [
-          "img/tv/screen1.png",
-          "img/tv/screen2.png"
         ]
       }
     ],
@@ -76,7 +82,7 @@
 }</code></pre>
 
 
-<h2 id="generic">Generic template parameters</h2>
+<h2 id="generic">Generic template properties</h2>
 
 <h3 id="name"><code>name</code></h3>
 
@@ -111,24 +117,6 @@
   <dd>Yes</dd>
 </dl>
 
-
-<h3 id="version"><code>version</code></h3>
-
-<dl>
-  <dt>Description</dt>
-  <dd>The template's version, identified by major and minor release components and an optional build number.</dd>
-  <dt>Usage</dt>
-  <dd>The version of the template is used for informational purpose for factory users.
-  <br/>When you commit a change to your template, Web applications that use your template do not automatically switch to the latest version. If the version changes upon commit, users will be notified that. Converserly, users will not be warned about updates that do not change the version. This may be useful for "cosmetic" changes (an update of your template's description or screenshots for example) that do not affect the functionality of your template.</dd>
-  <dt>JSON type</dt>
-  <dd>A string of the form <code>[0-9]+.[0-9]+(.[0-9]+)*</code> that defines a version with a major, minor and revision numbers.</dd>
-  <dt>Example</dt>
-  <dd><pre><code class="json">"version": "1.4.967"</code></pre></dd>
-  <dt>Required?</dt>
-  <dd>Yes</dd>
-</dl>
-
-
 <h3 id="description"><code>description</code></h3>
 
 <dl>
@@ -147,18 +135,135 @@
 </dl>
 
 
+<h3 id="version"><code>version</code></h3>
+
+<dl>
+  <dt>Description</dt>
+  <dd>The template's version.</dd>
+  <dt>Usage</dt>
+  <dd>The version of the template is used for informational purpose. Factory users that applied the template to some Web application get automatically notified when the version changes.</dd>
+  <dt>JSON type</dt>
+  <dd>A string that conforms to the <a href="http://semver.org/">Semantic Versioning 1.0.0-rc.1</a> requirements.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"version": "1.4.9"</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>Yes</dd>
+</dl>
+
+
+<h3 id="keywords"><code>keywords</code></h3>
+
+<dl>
+  <dt>Description</dt>
+  <dd>A list of keywords that describe the template</dd>
+  <dt>Usage</dt>
+  <dd>The factory displays the list of keywords next to the template name to guide the user selection. It also uses these keywords to filter out templates for search purpose.</dd>
+  <dt>JSON type</dt>
+  <dd>An array of strings</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"keywords": [
+  "event",
+  "birthday"
+]</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No</dd>
+</dl>
+
+
+<h3 id="contributors"><code>contributors</code></h3>
+
+<dl>
+  <dt>Description</dt>
+  <dd>Details about the contributors for this template. By convention, the first contributor is the original author of the template.</dd>
+  <dt>Usage</dt>
+  <dd>Future versions of the factory will display the names of the contributors and allow to filter templates of a contributor.</dd>
+  <dt>JSON type</dt>
+  <dd>An array of objects. Each object:
+  <ul>
+    <li>must have a <code>name</code> property, a string that identifies the name of the contributor;</li>
+    <li>may include an <code>email</code>, a string that contains the email of the contributor;</li>
+    <li>may include a <code>web</code> property, the URL of the contributor's Web site.</li>
+  </ul></dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"contributors": [
+  {
+    "name": "François Daoust",
+    "email": "francois@joshfire.com",
+    "web": "http://www.joshfire.com"
+  },
+  {
+    "name": "Lambdaman"
+  }
+]</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No</dd>
+</dl>
+
+
+<h3 id="maintainers"><code>maintainers</code></h3>
+
+<dl>
+  <dt>Description</dt>
+  <dd>Details about the maintainers for this template.</dd>
+  <dt>Usage</dt>
+  <dd>Future versions of the factory may display the names of the maintainers of a template.</dd>
+  <dt>JSON type</dt>
+  <dd>An array of objects that follows the same format as <code><a href="#contributors">contributors</a></code>.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"maintainers": [
+  {
+    "name": "FactoryWorker",
+    "email": "contact@joshfire.com",
+    "web": "http://www.joshfire.com"
+  }
+]</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No</dd>
+</dl>
+
+<h3 id="licenses"><code>licenses</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Details about the licenses under which the template source code is available.</dd>
+  <dt>Usage</dt>
+  <dd>The factory displays the information next to the template.</dd>
+  <dt>JSON type</dt>
+  <dd>An array of objects, where each object has a <code>type</code> property, a string that specifies the type of license, and a <code>url</code> property, the URL of the corresponding license text.
+  <br/>If the license is in the list of <a href="http://www.opensource.org/licenses/alphabetical">approved open source initiative licenses</a>, the <code>type</code> property must be the abbreviation of the license when available (defined between parentheses in the list) or the license's full name as it appears on the list.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"licenses": [
+  {
+    "type": "MIT",
+    "url": "http://example.net/license/MIT"
+  },
+  {
+    "type": "W3C License",
+    "url": "http://example.net/license/w3c"
+  }
+]</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No</dd>
+</dl>
+
+<h2 id="template-images">Template images</h2>
+
+<p>Template images convey the spirit of the template. Template images are <strong>extremely important</strong> because factory users will build their first impression about the template based on these images.</p>
+<p>While template images should convey the look-and-feel of the template, they are not meant to be screenshots. That said, <a href="#family-screenshots">screenshots</a> per supported family of devices are useful too and should be included in the manifest in the relevant section.</p>
+
 <h3 id="images"><code>images</code></h3>
 <dl>
   <dt>Description</dt>
-  <dd>Small and large visual logos for the template.
-  <br/>@@@Must reflect template spirit. Free space. Very important.</dd>
+  <dd>Small and large template images.
+  <br/>Images should convey the purpose, visual layout, and main targeted audience of the template.</dd>
   <dt>Usage</dt>
-  <dd>The factory displays the smaller logo in the templates selection list and the larger one in the template's detailed page, together with the <code>description</code>.</dd>
+  <dd>The factory displays the smaller image in the templates selection list and the larger image in the template's details page (together with the template's <a href="#description">description</a>).</dd>
   <dt>JSON type</dt>
-  <dd>An object composed of two name/value pairs with names <code>small</code> and <code>large</code> and URIs as values that link to the corresponding template logos. Relative URIs are resolved against the template's top-level directory.
-  <br/>Images must be PNG or JPEG.
-  <br/>The <code>small</code> image must be <code>380x236</code>.
-  <br/>The <code>large</code> image must be <code>700x335</code>.</dd>
+  <dd>An object with:
+  <ul>
+    <li>a <code>small</code> property that links to the small template image. Image size: <code>380x236</code>. PNG or JPEG.</li>
+    <li>a <code>large</code> property that links to the large template image. Image size: <code>700x335</code>. PNG or JPEG.</li>
+  </ul>
+  </dd>
   <dt>Example</dt>
   <dd><pre><code class="json">"images": {
   "small": "img/cake-sm.png",
@@ -171,7 +276,7 @@
 
 <h2 id="supported-devices">Supported devices</h2>
 
-<p>Web applications run on devices with very different constraints (from desktop computers to user-made connected objects). Web applications generated by the factory include a device detection mechanism that identifies and exposes the family of the device that runs the application. Please refer to <a href="/doc/develop/devices">Devices adaptation</a> for more details.</p>
+<p>Web applications run on devices with very different constraints (from desktop computers to user-made connected objects). Web applications generated by the factory include a device detection mechanism that identifies and exposes the family of the device that runs the application. Please refer to <a href="/doc/develop/devices">Support multiple devices</a> for more details.</p>
 <p>In the manifest file,  The <code>devices</code> section is recommended in all template manifests. A template must handle all families of devices if the section is not present.</p>
 
 <h3 id="devices"><code>devices</code></h3>
@@ -249,19 +354,20 @@
   <dt>Example</dt>
   <dd><pre><code class="json">"startfile": "app/index.phone.html"</code></pre></dd>
   <dt>Required?</dt>
-  <dd>No. In its absence, the <code>startfile</code> defined for all devices (value <em>*</em>) is used if present. In turn, in its absence, the default startfile (<code>index.html</code>) is used.</dd>
+  <dd>No. In its absence, the <code>startfile</code> defined for all devices (value <em>*</em>) is used if present. In its absence, the default startfile (<code>index.html</code>) is used.</dd>
 </dl>
 
 <h4 id="family-images"><code>images</code></h4>
 <dl>
   <dt>Description</dt>
-  <dd>@@@</dd>
+  <dd>Specific template image for the underlying family of devices.
+  <br/>As for the global template image, this image should not be an exact screenshot. It may include a screenshot taken on a typical device of the family augmented with additional content for instance.</dd>
   <dt>Usage</dt>
-  <dd>@@@Image per device will be used during template exploration phase. It does not need to be a precise screenshot. Free area whose size matches that of the small image.</dd>
+  <dd>The factory displays this specific image in the templates selection list when selecting a particular family of devices or when moving over the logo of a family of devices with the mouse.</dd>
   <dt>JSON type</dt>
-  <dd>URI to a PNG or JPEG image (or list of URIs???)
+  <dd>URI to a PNG or JPEG image.
   <br/>Relative URIs are resolved against the template's top-level directory.
-  <br/>Image must be PNG or JPEG, and <code>380x236</code>.</dd>
+  <br/>Image size: <code>380x236</code> (same as small template image). PNG or JPEG.</dd>
   <dt>Example</dt>
   <dd><pre><code class="json">"images": "img/phone/icon.png"</code></pre></dd>
   <dt>Required?</dt>
@@ -272,12 +378,13 @@
 <h4 id="family-screenshots"><code>screenshots</code></h4>
 <dl>
   <dt>Description</dt>
-  <dd>A link to a screenshot or a list of screenshots of the Web application on typical devices of this family.</dd>
+  <dd>Screenshots of the template on typical devices of the family.</dd>
   <dt>Usage</dt>
-  <dd>@@@template hovering and template configuration pane. Must be a true screenshot.</dd>
+  <dd>The factory displays the screenshots in the template's details page.
+  <br/>Screenshots must be <em>real</em> screenshots.</dd>
   <dt>JSON type</dt>
-  <dd>A string representing a URI or an array of strings.
-  <br/>@@@sizes</dd>
+  <dd>A URI or an array of URIs to screenshots.
+  <br/>Images sizes: less than <code>700 pixels</code> in either direction. PNG or JPEG.
   <dt>Example</dt>
   <dd><pre><code class="json">"screenshots": [
   "img/phone/screenshots/1.png",
@@ -292,13 +399,11 @@
 
 <p>Through the factory, the user configures sources of data and binds them as template inputs. Templates may support any number of datasources.</p>
 
-<p>@@@Joshfire.factory.getDataSource([datasourcename]);</p>
-
 <h3 id="datasources"><code>datasources</code></h3>
 
 <dl>
   <dt>Description</dt>
-  <dd>The data inputs supported by the template.</dd>
+  <dd>The datasource inputs supported by the template.</dd>
   <dt>Usage</dt>
   <dd>The factory adapts the user interface according to the number and type of inputs described in this section.</dd>
   <dt>JSON type</dt>
@@ -375,7 +480,7 @@
 
 <h2 id="template-options">Template options</h2>
 
-<p>In addition to datasources, templates may propose to customize the Web application through options. See <a href="/doc/develop/options">More configuration settings</a> for more details.</p>
+<p>In addition to datasources, templates may propose to customize the Web application through options (see <a href="/doc/develop/options">Propose more configuration settings</a>).</p>
 
 <h3 id="options"><code>options</code></h3>
 
@@ -431,23 +536,3 @@
 
 <p>TBD</p>
 
-
-<h2 id="other">Other parameters</h2>
-
-<h3 id="keywords"><code>keywords</code></h3>
-
-<dl>
-  <dt>Description</dt>
-  <dd>A list of keywords that describe the template</dd>
-  <dt>Usage</dt>
-  <dd>The factory displays the list of keywords next to the template name to guide the user selection. It also uses these keywords to filter out templates for search purpose.</dd>
-  <dt>JSON type</dt>
-  <dd>An array of strings</dd>
-  <dt>Example</dt>
-  <dd><pre><code class="json">"keywords": [
-  "event",
-  "birthday"
-]</code></pre></dd>
-  <dt>Required?</dt>
-  <dd>No</dd>
-</dl>

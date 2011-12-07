@@ -1,6 +1,6 @@
 <h1>Propose more configuration settings</h1>
 
-<p>Templates may customize the look-and-feel and functionality of the generated Web application based on additional configuration settings. For instance, a template that features recipes of one's grand-mother may ask for the nickname and a picture of the said grand-mother.</p>
+<p>Templates may propose additional configuration settings to allow factory users to customize the look-and-feel and functionality of the generated Web application. For instance, a template that features recipes of one's grandmother may ask for the nickname and a picture of the grandmother.</p>
 
 <h2>Define additional configuration settings</h2>
 
@@ -12,27 +12,29 @@
   "fullName": "Grandma's recipes",
   "version": "0.0.1",
   "description": "Ideal to list the recipes of your Grandma."
-  "datasources": {
-    "recipes": {
-      "title": "Recipes",
-      "description": "The list of recipes to include.",
-    }
-  }
-  "options": {
-    "schema": {
-      "nickname": {
-        "type": "string",
-        "title": "Grandma's nickname"
-      },
-      "picture": {
-        "type": "string",
-        "title": "A picture of Grandma"
+  "joshfire": {
+    "datasources": {
+      "recipes": {
+        "title": "Recipes",
+        "description": "The list of recipes to include.",
       }
     },
-    "form": {
-      "nickname",
-      "picture",
-      "datasource.recipes"
+    "options": {
+      "schema": {
+        "nickname": {
+          "type": "string",
+          "title": "Grandma's nickname"
+        },
+        "picture": {
+          "type": "string",
+          "title": "A picture of Grandma"
+        }
+      },
+      "form": {
+        "nickname",
+        "picture",
+        "datasource.recipes"
+      }
     }
   }
 }</code></pre>

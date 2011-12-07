@@ -5,7 +5,7 @@
 <p>In <a href="/doc/gettingstarted/intro">Introduction to templates</a>, we saw what a minimal template may look like. The manifest file contains:</p>
 
 <ul>
-  <li>factory-oriented information about the template (<a href="/doc/ref/package#description">description</a>, <a href="/doc/ref/package#keywords">keywords</a>, <a href="/doc/ref/package#family-screenshots">screenshots</a>, <a href="/doc/ref/package#license">license</a>, etc.);</li>
+  <li>factory-oriented information about the template (<a href="/doc/ref/package#description">description</a>, <a href="/doc/ref/package#keywords">keywords</a>, <a href="/doc/ref/package#family-screenshots">screenshots</a>, <a href="/doc/ref/package#licenses">licenses</a>, etc.);</li>
   <li>description of the datasource inputs of the template (names, numbers, types);</li>
   <li>definitions of additional template parameters as needed (allows per-application template customization);</li>
   <li>assertions about devices support and associated entry points.</li>
@@ -25,7 +25,27 @@
     "",
     "",
     ""
+  ],
+  "<a href="/doc/ref/package#contributors">contributors</a>": [
+    {
+      "name": "",
+      "email": "",
+      "web": ""
+    }
   ]
+  "<a href="/doc/ref/package#maintainers">maintainers</a>": [
+    {
+      "name": "",
+      "email": "",
+      "web": ""
+    }
+  ],
+  "<a href="/doc/ref/package#licenses">licenses</a>": [
+    {
+      "type": "",
+      "url": ""
+    }
+  ],
   "joshfire": {
     "<a href="/doc/ref/package#images">images</a>": {
       "small": "",
@@ -106,11 +126,17 @@
   <li>datasource types</li>
 </ul>
 
-<p>@@@example</p>
+<figure>
+  <img src="http://i.imgur.com/XF5iy.png" alt="A crowd of participants is attending an event. The tagline 'Connect with your public' is displayed as overlay, as well as a mobile phone and a tablet to show targeted devices." />
+  <figcaption>Example of a generic 'Event' template image</figcaption>
+</figure>
 
 <p><a href="/doc/ref/package#family-screenshots">Screenshots</a> linked from the manifest must be <em>real</em> screenshots taken on a typical device of the underlying family. The factory displays the screenshots in the template's details page.</p>
 
-<p>@@@examples</p>
+<figure>
+  <img src="http://i.imgur.com/rphpo.png" alt="" />
+  <figcaption>Example of a template screenshot on a phone</figcaption>
+</figure>
 
 <p><a href="/doc/ref/package#family-images">Per-family images</a> replace the generic template image when the user moves over or select a specific family for the template. The image has the same size as the large template image <code>700x335</code>. It should typically feature a screenshot of the template on a typical device of the selected family completed with visual clues on the template.</p>
 
@@ -122,3 +148,15 @@
   <li><a href="/doc/develop/options">Propose more configuration settings</a></li>
   <li><a href="/doc/develop/">Support multiple devices</a></li>
 </ul>
+
+<h3>Use template versioning</h3>
+
+<p>A Web application is bound to a specific version of a template identified by the latest commit identifier for the template when the Web application is created.</p>
+
+<p>In particular, a Web application does not immediately switch to the latest version of a template when this template is updated. That's on purpose, both to ensure that Web applications do not break in case changes are not backward compatible, and to ensure factory users remain in control of the evolutions of their Web application(s).</p>
+
+<p>That said, the factory will notify users of a template whenever the version defined in the manifest file gets incremented, and propose that they update to the latest version.</p>
+
+<p>In turn, this means you should use template versioning through the <a href="/doc/ref/package#version">version</a> manifest property and provide changelogs in the <a href="/doc/ref/package#description">description</a> of your template to guide factory users through updates.</p>
+
+<p>Conversely, you should not increment the template's version number for "cosmetic" changes, for instance updates of your template's description or screenshots, since they do not affect the functionality of your template in any way. This avoids sending annoying users with useless notifications.</p>
