@@ -2,14 +2,14 @@
 
 <p>The template API allows a template to access datasources inputs and template configuration settings as set by the user through the factory interface. The template API is exposed by the bootstrap script in <a href="/doc/develop/start">template entry points</a>.</p>
 
-<p>All information is exposed in a global <code>Joshfire.factory.config</code> object.</p>
+<p>Information is exposed in the global <code>Joshfire.factory</code> object.</p>
 
 
 <h2 id="info">Information about datasources</h2>
 
 <h3 id="getDataSource"><code>Joshfire.factory.getDataSource</code></h3>
 
-<p>Datasources are returned by the <code>Joshfire.factory.getDataSource</code> function. The function takes as argument the name of the datasource input to return and returns an instance of a <a href="#datasource"><code>datasource</code></a> or an instance of a <a href="#multiDatasource"><code>multiDatasource</code></a> if the datasource supports multiple feeds (set with the <a href="/doc/ref/package#datasource-multiple"><code>multiple</code></a> option in the manifest file).</p>
+<p>The <code>Joshfire.factory.getDataSource</code> function returns information about datasources inputs. The function takes as argument the name of the datasource input to return and returns an instance of a <a href="#datasource"><code>datasource</code></a> object or an instance of a <a href="#multiDatasource"><code>multiDatasource</code></a> object if the datasource supports multiple feeds (set with the <a href="/doc/ref/package#datasource-multiple"><code>multiple</code></a> option in the manifest file).</p>
 
 <p>The datasources names must be those defined in the <a href="/doc/ref/package#datasources">datasources</a> section of the manifest file. The function returns <code>null</code> if the requested datasource is not defined or is not available, for instance because the user did not bind any datasource to the input.</p>
 
@@ -51,20 +51,22 @@ var news = f.getDataSource("news");</code></pre>
 
 <p>The method is asynchronous and returns immediately. It takes as arguments additional query parameters and a callback method.</p>
 
-<p>The callback follows the <a href="http://nodejs.org/">Node.js</a> convention so the first argument of each callback method is always an error object, and it is undefined/null if the method was successful. The callback gets called with a <code>data</code> object as its second argument. This object exposes an <code>entries</code> property that contains an array of <a href="#datasource-item">datasource items</a>.</p>
+<p>The callback follows the <a href="http://nodejs.org/">Node.js</a> convention: its first argument is an error object, and it is <code>undefined</code>/<code>null</code> if the method was successful, its second argument is an instance of a <code>data</code> object.</p>
 
-<p>Here is a code example that fetches the content of a datasource and prepare
+<p>The <code>data</code> object exposes an <code>entries</code> property whose value is an array of <a href="#datasource-item">datasource items</a>.</p>
+
+<p>Here is a code example that fetches the content of a datasource and extract the info you need in your template:</p>
 <pre><code class="javascript">var news = f.getDataSource("news");
 var datasourceName = news.name;
 var datasourceEntries = null;
-news.find({}, function (err, data) {
+news.<strong>find</strong>({}, function (err, data) {
   if (err) {
     // An error occurred
     // (network, service unavailable, etc.)
   }
   else {
     // Parse and store resulting data
-    datasourceEntries = <a href="http://documentcloud.github.com/underscore/">_</a>.map(data.entries, function (item, idx) {
+    datasourceEntries = <a href="http://documentcloud.github.com/underscore/">_</a>.map(<strong>data.entries</strong>, function (item, idx) {
       var process = function (item) {
         // Process the item to create an entry
         // that is appropriate for your template
@@ -78,7 +80,7 @@ news.find({}, function (err, data) {
 
 <h3 id="multiDatasource">The <code>multiDatasource</code> object</h3>
 
-<p>The <code>getDataSource</code> function returns a <code>multiDatasource</code> object when the datasource input accepts multiple datasource feeds and when the user actually bound the input to multiple datasource feeds through the factory.</p>
+<p>The <code>getDataSource</code> function returns a <code>multiDatasource</code> object when the datasource input accepts multiple datasource feeds and when the factory user actually bound the input to multiple datasource.</p>
 
 <p>The object exposes one property <code>children</code>, an array of <code>datasource</code> objects.</p>
 
