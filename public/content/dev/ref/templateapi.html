@@ -40,9 +40,9 @@ var news = f.getDataSource("news");</code></pre>
   <dt><code>col</code></dt>
   <dd>A string that identifies the collection type of data entries.
   <br/>For instance: "video", "picture".</dd>
-  <dt><code>config</code></dt>
-  <dd>Search parameters. The name/value pairs of the config object are specific to each service provider and may evolve over time. The <a href="#datasource-find"><code>find</code></a> method uses this object to build the query sent to the service provider.
-  <br/>For instance: Youtube videos may be filtered by username.</dd>
+  <dt><code>query</code> and <code>config</code></dt>
+  <dd>Search parameters. These objects are specific to each service provider and may evolve over time. The <a href="#datasource-find"><code>find</code></a> method uses them to construct the query sent to the service provider to retrieve the items.
+  <br/>Youtube videos may be filtered by username for instance.</dd>
 </dl>
 
 <h4 id="datasource-find">The <code>find</code> method</h4>
@@ -178,7 +178,7 @@ news.<strong>find</strong>({}, function (err, data) {
 
 <p>An <code>imageObject</code> contains meta-information about an image.</p> 
 <pre><code class="json">{
-"url" : "http://static.platform.joshfire.com.s3.amazonaws.com/ab/bd7c8178a4fdf43d5a197a8dc92e43/avatar.jpg",
+  "url" : "http://static.platform.joshfire.com.s3.amazonaws.com/ab/bd7c8178a4fdf43d5a197a8dc92e43/avatar.jpg",
   "mime: "image/jpeg",
   "size": 7048,
   "id: "bd7c8178a4fdf43d5a197a8dc92e43",
@@ -241,16 +241,3 @@ news.<strong>find</strong>({}, function (err, data) {
 <p>Information about selected plugins is exposed in the <code>Joshfire.factory.config.plugins</code> object.</p>
 
 <p>TBD.</p>
-
-
-
-<p>The following JSON representation of a possible <code>datasources</code> object supposes that the template manifest defines two datasources: <code>main</code> and <code>news</code>. The <code>main</code> datasource supports multiple datasources feeds:</p>
-
-<pre><code class="json">{
-  "main":  [
-    <em>datasourceObject</em>,
-    <em>datasourceObject</em>
-  ],
-  "news" : <em>datasourceObject</em>
-}</code></pre>
-
