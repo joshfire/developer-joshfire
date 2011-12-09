@@ -1,28 +1,98 @@
 <h1>Bind to datasources</h1>
 
-<p>The platform is focused on the generation of <strong>content-based</strong> Web applications. Through the user interface, users select the feeds that they would like to expose in the application. Templates fetch and render data from the datasources.</p>
+<p>The factory focuses on the generation of <strong>content-based</strong> Web applications. This content comes from datasource feeds. A number of datasource connectors are available in the factory. Users can select and configure datasources they want to expose in their Web application in a few clicks.</p>
+
+<p>As template developer, it is your responsibility to integrate these datasources in the resulting Web application while ensuring the user experience remains good on supported families of devices (which we'll address <a href="/doc/develop/devices">next</a>).</p>
 
 
-<h2>Define datasource inputs</h2>
+<h2>Define datasources inputs</h2>
 
-<p>Again, pay attention to the <a href="/doc/ref/package#datasource-title">title</a> and <a href="/doc/ref/package#datasource-description">description</a> of the datasource input to guide users when they select datasources. The description should provide an indication of the expected type of data (e.g. pictures? videos? blog post?) and clarifies how the template will consume that information.</p>
+<p>Your first task is to define the datasources inputs that factory users should set to apply your template in their Web application. To do so, simply fill out the <a href="/doc/ref/package#datasources">datasources</a> section in the manifest file.</p>
 
-<p>The description should also highlight the maximum number of data feeds handled by the template for datasources that support multiple data feeds (i.e. when the <a href="/doc/ref/package#datasource-multiple">multiple</a> option is set).</p>
+<p>Pay attention to the <a href="/doc/ref/package#datasource-title">title</a> and <a href="/doc/ref/package#datasource-description">description</a> of the datasource input to guide users when they set datasources. The description should provide an indication of the expected type of data if any (e.g. pictures? videos? blog post?) and clarify how the template consumes that information.</p>
+
+<p>The description should also highlight the maximum number of data feeds handled by the template for datasources inputs that support multiple data feeds (in other words when the <a href="/doc/ref/package#datasource-multiple">multiple</a> option is set).</p>
+
+<p>Here is an example manifest section for a template that features recipes and expects 3 datasource inputs:</p>
+<ol>
+  <li><code>recipes</code>, a blog post like feed that describes recipes.</li>
+  <li><code>howtos</code>, video tutorials to learn basic cooking techniques, possibly subdivided in categories.</li>
+  <li><code>wall</code>, pictures of what users prepared.</li>
+</ol>
+<pre><code class="json">"datasources": {
+  "recipes": {
+    "title": "Recipes",
+    "description": "The list of recipes to display. The template displays the title and thumbnail of each entry, and details when the item is selected."
+  },
+  "howtos": {
+    "title": "Cooking tutorials",
+    "description": "Tutorials to learn basic cooking techniques. The template may render textual content but is more oriented towards video content. Tutorials may be grouped by topic, using one feed per topic.",
+    "multiple": true
+  },
+  "wall": {
+    "title": "Wall of fame",
+    "description": "Pictures of users achievements."
+  }
+}</code></pre>
+
+<h2>Fetch datasource feeds</h2>
+
+<p>Once you have defined your datasource inputs in the manifest file, factory users can bind them to datasources feeds. You now need to write code in your template to retrieve and render content from these datasources feeds.</p>
+
+<p>To fetch these feeds, use the <a href="/doc/ref/templateapi#datasource-find">find</a> method of <code>datasource</code> objects returned by the <a href="/doc/ref/templateapi#getDataSource">getDataSource</a> method. The <code>find</code> method uses a data proxy run by Joshfire that serves as interface between your template and content service providers: it sends the appropriate requests to service providers and normalize the responses it receives to ease processing in your template afterwards.</p>
+
+<p>In practice, the callback method that gets called when the feed becomes available is given an array of <a href="/doc/ref/templateapi#datasource-item">datasource items</a> that may represent different types of data (e.g. pictures, videos, blog posts, event). These datasource items share the same structure, exposing similar properties whenever possible (a "picture" may not make sense for an event for instance).</p>
+
+<p>The first argument of the <code>find</code> may be used to retrieve slices of data in a set, for instance to retrieve the next 10 items, skipping the first 40 items. The options are similar to options used in <a href="http://www.mongodb.org/display/DOCS/Querying#Querying-QueryOptions">MongoDB</a>. The following example shows to implement the "skip 40, get 10" scenario:</p>
+
+<pre><code class="javascript">var recipes = Joshfire.factory.getDataSource("recipes");
+recipes.find(
+  <strong>{
+    limit: 10,
+    skip: 40
+  }</strong>,
+  function (err, data) {
+    // Process data entries
+  }
+);</code></pre>
 
 
-<p>TBD</p>
+<h2>Deal with datasource types</h2>
 
-<h2>Fetch datasource inputs</h2>
+<p>@@@ This is still in flux.</p>
 
-<p>TBD</p>
+Text based content.
+Photos.
+Videos.
+Events.
+Locations.
+Tabular data.
 
-<h2>Stay tuned on datasources updates</h2>
+Tumblr has text, quote, link, answer, video, audio, photo, chat (http://www.tumblr.com/docs/en/api/v2#posts)
 
-<p>TBD</p>
+Common properties:
+- identifier
+- type
+- date
+- format ?
+- source ?
+- title
 
-<h2>Available datasource types</h2>
+Most of the time:
+- image
 
-<p>TBD</p>
+
+Business type:
+- very specific.
+
+Sites à consulter pour les vocabulaires:
+- http://dublincore.org/
+- http://sioc-project.org/
+- http://schema.org/ (Google, Microsoft, Yahoo! et d'autres)
+- http://semanticweb.org/wiki/Ontology
+
+Pour les préfixes usuels: http://prefix.cc/
+
 
 <h3>Pictures</h3>
 
@@ -30,4 +100,6 @@
 
 <h3>Blog post</h3>
 
+<h3>Spreadsheets</h3>
 
+<h3>Event</h3>
