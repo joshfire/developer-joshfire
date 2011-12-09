@@ -154,3 +154,7 @@ a[href^="#"] {
 #download:active {
   top: 1px;
 }
+
+pre code {
+  white-space: pre-wrap;
+}
