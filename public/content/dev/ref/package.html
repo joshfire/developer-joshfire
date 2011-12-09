@@ -490,12 +490,8 @@
   <dt>Usage</dt>
   <dd>The factory adjusts the template's configuration pane based on information given in this section, and ensures the selected option values get exposed in the generated Web application.</dd>
   <dt>JSON type</dt>
-  <dd>An object with two required properties:
-  <ul>
-    <li>The <code>schema</code> section describes the data that needs to be collected. It is a JSON object whose property names are the additional option names the template uses and whose property values are option objects.</li>
-    <li>The <code>form</code> section explains how to render datasources. It is an array of references to datasources or options. The factory displays the datasources and options in the order of the array. All datasources must appear in the array.</li>
-  </ul>
-  </dd>
+  <dd>An object that follows the <a href="/doc/ref/jsonform">JSON form</a> format.
+  <br/>Note the factory automatically adds datasource inputs in the schema of the JSON form object with a name starting with <code>datasource.<em>[datasource name]</em></code>. These inputs must be referenced in the <code>form</code> section of the JSON form object.</dd>
   <dt>Example</dt>
   <dd><pre><code class="json">"options": {
   "schema": {
@@ -515,24 +511,3 @@
   <dt>Required?</dt>
   <dd>No</dd>
 </dl>
-
-<h3 id="option">The option object</h3>
-
-<h4 id="option-title"><code>title</code></h4>
-<dl>
-  <dt>Description</dt>
-  <dd></dd>
-  <dt>Usage</dt>
-  <dd></dd>
-  <dt>JSON type</dt>
-  <dd></dd>
-  <dt>Example</dt>
-  <dd></dd>
-  <dt>Required?</dt>
-  <dd>Yes</dd>
-</dl>
-
-<h3 id="ref-options">References to datasources or options</h3>
-
-<p>TBD</p>
-

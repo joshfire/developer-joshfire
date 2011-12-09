@@ -1,0 +1,126 @@
+<h1>JSON form reference</h1>
+
+<p><a href="http://github.com/joshfire/jsonform">JSON form</a> is a standalone JavaScript library that makes it easy to describe structured form data using a <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a> and visual hints for the rendering of a form in a Web page to gather data from users.</p>
+
+<p>The <a href="/doc/ref/package#options">options</a> section of the manifest file follows the JSON form format. It allows templates to propose additional parameters and thus customize the functionality and look-and-feel of the generated Web application beyond datasource inputs.</p>
+
+<h2>JSON form object structure</h2>
+
+<p>The outline of a JSON form object is:</p>
+<pre><code class="json">{
+  "<a href="#schema">schema</a>": <em>JSON schema</em>,
+  "<a href="#value">value</a>": <em>Default values</em>,
+  "<a href="#form">form</a>": <em>Visual hints</em>
+}</code></pre>
+
+
+<h2 id="schema">Data schema</h2>
+
+<p>The <code>schema</code> property describes the structured data that needs to be collected. It is a JSON object that follows the <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a>. Using JSON Schema allows to define both the expected data structure and constraints about data values.</p>
+
+<p>Below is a simple schema with two pieces of data, one that asks for a bit of HTML for an "about" page and another one that asks for a gender. The gender must be one of the enumerated choices:</p>
+<pre><code class="json">{
+  "type": "object",
+  "properties": {
+    "abouthtml": {
+      "title": "About the application",
+      "description": "HTML content that describes the application."
+      "type": "string",
+    },
+    "gender": {
+      "title": "Gender",
+      "description": "Gender of the application."
+      "type": "string",
+      "enum": [
+        "male",
+        "female",
+        "thing"
+      ]
+    }
+  }
+}</code></pre>
+
+<p>In just about all the cases, the top level of this schema does not contain any information that the factory could use. For the sake of simplicity and readability, you can drop it and start directly with the contents of the <code>properties</code> property:</p>
+<pre><code class="json">{
+  "abouthtml": {
+    "title": "About the application",
+    "description": "HTML content that describes the application."
+    "type": "string",
+  },
+  "gender": {
+    "title": "Gender",
+    "description": "Gender of the application."
+    "type": "string",
+    "enum": [
+      "male",
+      "female",
+      "thing"
+    ]
+  }
+}</code></pre>
+<p>Obviously, the above shortcut would not work if your schema needs to define a piece of data named "properties"!</p>
+
+<p>Through recursion, you can build much more complex structures. For instance, the following schema exposes would generate two levels (note the use of the shortcut method):</p>
+<pre><code class="json">{
+  "abouthtml": {
+    "title": "About the application",
+    "type": "string"
+  },
+  "author": {
+    "title": "Author",
+    "type": "object",
+    <strong>"properties"</strong>: {
+      "name": {
+        "title": "Author's name",
+        "type": "string"
+      },
+      "gender": {
+        "title": "Author's gender",
+        "type": "string",
+        "enum": [
+          "male",
+          "female",
+          "alien"
+        ]
+      },
+      "magic": {
+        "title": "Author's magic number",
+        "type": "number",
+        "minimum": 1
+      }
+    }
+  }
+}</code></pre>
+
+<p>JSON form supports the following types:</p>
+<dl>
+  <dt><code>string</code></dt>
+  <dd>A string.</dd>
+  <dt><code>number</code></dt>
+  <dd>An number.</dd>
+  <dt><code>boolean</code></dt>
+  <dd>True or false.</dd>
+  <dt><code>array</code></dt>
+  <dd>An array of items. The <code>items</code> property must be defined for arrays.</dd>
+  <dt><code>object</code></dt>
+  <dd>For objects that have children. The <code>properties</code> property must be defined for objects.</dd>
+</dl>
+
+
+<h2 id="value">Default values</h2>
+
+<p>Use the <code>value</code> section to define default values for some of the parameters. The object's properties are the names of the properties defined in the <code>schema</code> section. To reference properties that are not at the root level, simply prefix the property name with the names of its ancestors, with dots between the names, e.g. <code>author.gender</code> in the example we've just seen.</p>
+
+<p>The property values must follow the type defined in the schema.</p>
+
+<p>Here are default values for our little example:</p>
+<pre><code class="json">{
+  "abouthtml": "<p>This is a great app!</p>",
+  "author.gender": "alien",
+  "author.magic": 42
+}</code></pre>
+
+
+<h2 id="form">Form rendering</h2>
+
+<p>TBD</p>
