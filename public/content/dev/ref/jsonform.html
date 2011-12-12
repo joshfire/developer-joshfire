@@ -1,25 +1,31 @@
 <h1>JSON form reference</h1>
 
-<p><a href="http://github.com/joshfire/jsonform">JSON form</a> is a standalone JavaScript library that makes it easy to describe structured form data using a <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a> and visual hints for the rendering of a form in a Web page to gather data from users.</p>
+<p>The <a href="http://github.com/joshfire/jsonform">JSON form</a> library is an open-source JavaScript library that can generate HTML forms from a structured data model and a layout description, validate user inputs against the declared data model, and create the resulting structured object initialized with user entered values upon form submission.</p>
 
-<p>The <a href="/doc/ref/package#options">options</a> section of the manifest file follows the JSON form format. It allows templates to propose additional parameters and thus customize the functionality and look-and-feel of the generated Web application beyond datasource inputs.</p>
+<p>The library depends on the <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> utility belt and on <a href="http://jquery.com/">jQuery</a>.</p>
 
-<h2>JSON form object structure</h2>
+<p>The library defines a JSON format to describe the underlying data model, possible default values, and the layout of the form. It re-uses existing concepts whenever possible.</p>
+
+<p>Joshfire factory uses the JSON form format in the <a href="/doc/ref/package#options">options</a> section of the manifest file to allow templates to propose additional parameters and thus customize the functionality and look-and-feel of the generated Web application beyond datasources inputs.</p>
+
+<h2 id="format">JSON form format</h2>
+
+<h3 id="outline">Outline of a form declaration</h3>
 
 <p>The outline of a JSON form object is:</p>
 <pre><code class="json">{
-  "<a href="#schema">schema</a>": <em>JSON schema</em>,
+  "<a href="#schema">schema</a>": <em>Data schema</em>,
   "<a href="#value">value</a>": <em>Default values</em>,
-  "<a href="#form">form</a>": <em>Visual hints</em>
+  "<a href="#form">form</a>": <em>Form layout</em>
 }</code></pre>
 
 
-<h2 id="schema">Data schema</h2>
+<h3 id="schema">Data schema</h3>
 
-<p>The <code>schema</code> property describes the structured data that needs to be collected. It is a JSON object that follows the <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a>. Using JSON Schema allows to define both the expected data structure and constraints about data values.</p>
+<p>The <code>schema</code> property describes the structured data model that is to be generated. It is a JSON object that follows the <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a> specification. Using JSON Schema allows to define both the expected data structure and constraints about data values.</p>
 
 <p>Below is a simple schema with two pieces of data, one that asks for a bit of HTML for an "about" page and another one that asks for a gender. The gender must be one of the enumerated choices:</p>
-<pre><code class="json">{
+<pre><code class="json">"schema": {
   "type": "object",
   "properties": {
     "abouthtml": {
@@ -34,14 +40,14 @@
       "enum": [
         "male",
         "female",
-        "thing"
+        "alien"
       ]
     }
   }
 }</code></pre>
 
-<p>In just about all the cases, the top level of this schema does not contain any information that the factory could use. For the sake of simplicity and readability, you can drop it and start directly with the contents of the <code>properties</code> property:</p>
-<pre><code class="json">{
+<p>In just about all cases in JSON form, the root level of the JSON schema describes an object with properties. For the sake of simplicity and readability, you can drop this level and start directly with the contents of what its <code>properties</code> property would have been. The JSON form library will simply re-create the implicit root level if it cannot find the <code>properties</code> property. Using this shortcut notation, the previous example may be written as:</p>
+<pre><code class="json">"schema": {
   "abouthtml": {
     "title": "About the application",
     "description": "HTML content that describes the application."
@@ -54,21 +60,21 @@
     "enum": [
       "male",
       "female",
-      "thing"
+      "alien"
     ]
   }
 }</code></pre>
-<p>Obviously, the above shortcut would not work if your schema needs to define a piece of data named "properties"!</p>
+<p>Of course, do not use this shortcut notation if your schema needs to define a root-level property named "properties" otherwise the library would think you're actually using the complete notation!</p>
 
-<p>Through recursion, you can build much more complex structures. For instance, the following schema exposes would generate two levels (note the use of the shortcut method):</p>
-<pre><code class="json">{
+<p>Through recursion, you can build much more complex structures. The following schema would generate two levels:</p>
+<pre><code class="json">"schema": {
   "abouthtml": {
     "title": "About the application",
     "type": "string"
   },
   "author": {
     "title": "Author",
-    "type": "object",
+    <strong>"type": "object",</strong>
     <strong>"properties"</strong>: {
       "name": {
         "title": "Author's name",
@@ -92,12 +98,12 @@
   }
 }</code></pre>
 
-<p>JSON form supports the following types:</p>
+<p>Please refer to the <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON schema</a> specification for more information. JSON form supports the following property types:</p>
 <dl>
   <dt><code>string</code></dt>
   <dd>A string.</dd>
   <dt><code>number</code></dt>
-  <dd>An number.</dd>
+  <dd>A number.</dd>
   <dt><code>boolean</code></dt>
   <dd>True or false.</dd>
   <dt><code>array</code></dt>
@@ -105,22 +111,245 @@
   <dt><code>object</code></dt>
   <dd>For objects that have children. The <code>properties</code> property must be defined for objects.</dd>
 </dl>
+<p>If the <code>type</code> property and the <code>items</code> properties are not defined, <code>string</code> is assumed. If the <code>type</code> property is not defined but the <code>items</code> property is, <code>object</code> is assumed.</p>
 
+<h3 id="value">Default values</h3>
 
-<h2 id="value">Default values</h2>
+<p>Use the <code>value</code> section to define default values for some of the data in the data model. The object's properties are the names of the properties defined in the <code>schema</code> section. To reference properties that are not at the root level, simply prefix the property name with the names of its ancestors, separating names with dots, e.g. <code>author.gender</code> in the example we've just seen.</p>
 
-<p>Use the <code>value</code> section to define default values for some of the parameters. The object's properties are the names of the properties defined in the <code>schema</code> section. To reference properties that are not at the root level, simply prefix the property name with the names of its ancestors, with dots between the names, e.g. <code>author.gender</code> in the example we've just seen.</p>
-
-<p>The property values must follow the type defined in the schema.</p>
+<p>The property values must be of the type defined in the schema.</p>
 
 <p>Here are default values for our little example:</p>
-<pre><code class="json">{
-  "abouthtml": "<p>This is a great app!</p>",
+<pre><code class="json">"value": {
+  "abouthtml": "&lt;p&gt;This is a great app!&lt;/p&gt;",
   "author.gender": "alien",
   "author.magic": 42
 }</code></pre>
 
+<p>The JSON form library pre-fills a form input with its default value if one is defined. It also sets properties to their default values in the structured object generated upon form submission if the property was not rendered in the form.</p>
 
-<h2 id="form">Form rendering</h2>
 
-<p>TBD</p>
+<h3 id="form">Form layout</h3>
+
+<p>The <code>form</code> section defines the layout of the HTML form to generate. It is a JSON array. Each item in the array describes a section of the resulting form. The order of the sections in the generated HTML form follows the order of the items in the array.</p>
+
+<p>An array item may be:</p>
+<ol>
+  <li><strong>A string with the specific value <code>"*"</code></strong>. The JSON form library generates a form section that consists of one form input per property defined in the schema. The default template is used for each form input. Use this specific value for simple forms. You will likely want more control over the layout as soon as your data model gets more complex, though.</li>
+  <li><strong>A string that references the name of a property in the schema</strong> (prefixed with ancestors names separated with dots for properties that are not at the root level). The JSON form library generates a form input for the property, using the default template.</li>
+  <li><strong>A <a href="#section">JSON object</a> that references a property in the schema</strong>. The JSON form library generates a form input for the property, using instructions in this JSON object to adjust the default template as necessary.</li>
+  <li><strong>A <a href="#section">JSON object</a> that describes a specific form section</strong> not linked to properties in the schema. Use this to add a submit button or a fieldset to group some of the form inputs in the generated form for example.</li>
+</ol>
+
+<p>The following example generates a "default" form for all the properties defined in the data model. A "Submit" button is displayed at the end of the form. This submit button is one of the possible specific form sections that are not linked to properties in the schema.</p>
+<pre><code class="json">"form": [
+  <strong>"*"</strong>,
+  {
+    <strong>"type": "submit"</strong>,
+    "value": "Submit"
+  }
+]</code></pre>
+
+<p>In the second example below, the <code>abouthtml</code> property expects an HTML fragment. The object tells the JSON form library to use a <code>textarea</code> element rather than the <code>text</code> input that the default template would generate for this field (note we get to defaults and ways to override defaults right after this example).</p>
+<pre><code class="json">"form": [
+  "author.name",
+  "author.gender",
+  {
+    <strong>"key": "abouthtml"</strong>,
+    <strong>"type": "textarea"</strong>
+  }
+]</code></pre>
+
+
+<h4 id="default">Default template</h4>
+
+<p>By default, the JSON form library checks the type and options of a property defined in the schema (string, boolean, enumeration defined...) to decide upon the type of HTML form input to generate (text, select, checkbox...). The following mapping is used:</p>
+<ul>
+  <li>If the property defines an enumeration in the JSON schema, a <code>&lt;select&gt;</code> element whose options are the enumeration values gets generated.</li>
+  <li>If the property type is <code>string</code>, a <code>text</code> input gets generated.</li>
+  <li>If the property type is <code>number</code>, a <code>text</code> input gets generated.</li>
+  <li>If the property type is <code>boolean</code>, a <code>checkbox</code> input gets generated.</li>
+  <li>If the property type is <code>array</code>, a <code>fieldset</code> gets generated. This fieldset contains a first input field whose type depends on the type defined for the array items in the JSON schema (through the <code>items</code> property) and a bit of HTML and JavaScript code to add/delete items.</li>
+  <li>If the property type is <code>object</code>, a <code>fieldset</code> gets generated. This fieldset contains the default form generated from the children of the object.</li>
+</ul>
+
+<p>This mapping may evolve in the future, in particular to take advantage of the new form input types introduced in HTML5 when most browsers support them.</p>
+
+<p>The JSON form library uses the information available in the JSON schema to complete the generated form section:</p>
+<ul>
+  <li>The <code>title</code> property serves as label for the input.</li>
+  <li>The <code>description</code> property is displayed next to the input field to guide user input.</li>
+  <li>The <code>required</code> property is used to hint at the required nature of the input field with a required flag (typically an asterisk next to the field input).</li>
+</ul>
+
+<h4 id="section">Form section description object</h4>
+
+<p>While it is tempting to stick to the use of strings that reference properties in the JSON schema, there are many reasons why you might want to get more control over generated form sections. We've already seen two examples: to generate a "submit" button or to display a larger text input when the expected user input may be long. There are other possible reasons such:</p>
+<ul>
+  <li>It you ask for a password, you may want to generate a <code>password</code> input.</li>
+  <li>If your form gets more complex, you may want to introduce groups of form controls e.g. to ease readibility. You can do it but need to use a specific form section.</li>
+  <li>You may want to insert snippets of HTML among the other input fields to guide users.</li>
+  <li>You may want to provide your own validation error messages.</li>
+  <li>You may simply want to replace part or all of the HTML markup that would normally get generated by your own.</li>
+</ul>
+
+<p>You can do all of the above through properties of the JSON object that you can provide as item of the <code>form</code>'s array. Possible properties are defined below. The list is sorted by alphabetic order. Most of the time, you will set the <code>key</code> property (when you want to reference a property in the JSON schema) and/or the <code>type</code> property. The additional properties that you may set on top of <code>key</code> and <code>type</code> are usually a direct consequence of the values you set for them.</p>
+
+<dl>
+  <dt><code>append</code></dt>
+  <dd>Use this property to insert a suffix after the generated form input.
+  <br/>The property accepts an HTML fragment string as value.
+  <br/>Note the JSON form library does not append the suffix to the generated object upon form submission.
+  <br/>(see also <code>prepend</code>)</dd>
+
+  <dt><code>id</code></dt>
+  <dd>By default, the generated form input has an id of the form<code>jsonform-elt-<em>[key]</em></code>. Set this property to override the <code>id</code> attributed of the generated form input.</dd>
+
+  <dt><code>items</code></dt>
+  <dd>This property is only useful when the <code>type</code> property is set to <code>fieldset</code> or <code>actions</code>.
+  <br/>This property accepts an array of form section description objects as value. Use this property to introduce sub-levels and grouping of form inputs in the generated form. See examples below for details.</dd>
+
+  <dt><code>itemshtml</code></dt>
+  <dd>This property is only useful when the <code>type</code> property is set to <code>fieldset</code> or <code>actions</code>.
+  <br/>Use this property to take entire control over the generated HTML content of the <code>&lt;fieldset&gt;</code> element or <code>&lt;div&gt;</code> element.
+  <br/>The <code>items</code> property must not be defined when this property is defined.
+  <br/>This property accepts an HTML fragment string as value.</dd>
+
+  <dt><code>key</code></dt>
+  <dd>The name of the property in the JSON schema bound to this form section.
+  <br/>This property must be set to link this form section to a property in the JSON schema. Conversely, this property must not be set to define a specific form section (such as a "submit" button).
+  <br/>Property names must be prefixed with their ancestors names separated with a dot if they are not first level properties (e.g. <code>"author.name"</code> in the recurring example of this documentation).</dd>
+
+  <dt><code>legend</code></dt>
+  <dd>This property is only useful when the <code>type</code> property is set to <code>fieldset</code>.
+  <br/>Set this property to define the legend for the generated <code>fieldset</code>.</dd>
+
+  <dt><code>name</code></dt>
+  <dd>By default, the <code>name</code> attribute of the generated form input is set to the name of the property in the JSON schema. Set this property to override it.</dd>
+
+  <dt><code>prepend</code></dt>
+  <dd>Use this property to insert a prefix before the generated form input.
+  <br/>The property accepts an HTML fragment string as value.
+  <br/>Note the JSON form library does not insert the prefix to the generated object upon form submission.
+  <br/>(see also <code>append</code>)</dd>
+
+  <dt><code>template</code></dt>
+  <dd>This property is only useful when the <code>type</code> property is not set to <code>fieldset</code> or <code>actions</code>.
+  <br/>Use this property to take entire control over the generated HTML form input (label and actual form input included).
+  <br/>This property accepts an HTML fragment string as value.</dd>
+
+  <dt><code>title</code></dt>
+  <dd>By default, the label of the generated form input is set to the <code>title</code> defined for the property in the JSON schema. Set this property to override the title (or to define it if the schema does not).</dd>
+
+  <dt><code>type</code></dt>
+  <dd>The type of form section to generate.
+  <br/>This property must be set to define a specific form section (such as a "submit" button). It may be set when this form section is bound to a property in the JSON schema to override the type of form input that would be generated by default.
+  <br/>This property accepts the following values:
+  <ul>
+    <li>one of <a href="http://dev.w3.org/html5/spec/the-input-element.html#attr-input-type">the <code>type</code> attribute values defined in HTML5</a>, although please note that the JSON form library currently only supports a fraction of these values, namely <code>text</code>, <code>password</code>, <code>checkbox</code>, <code>file</code>, <code>submit</code> and <code>button</code>. Support for additional values will be added over time. The generated form input gets adapted to use the appropriate input type as a consequence.
+    <br/>The <code>key</code> property must not be defined when the value is <code>button</code> or <code>submit</code>.</li>
+    <li><code>textarea</code> to force the use of a <code>&lt;textarea&gt;</code> element for the form input.</li>
+    <li><code>fieldset</code> to generate a <code>&lt;fieldset&gt;</code> element. The <code>key</code> property must not be defined when this value is used.</li>
+    <li><code>actions</code> to generate a section meant to contain possible user actions. The <code>key</code> property must not be defined when this value is used.</li>
+  </ul>
+  <!-- 
+  @@@'select' and 'array'? It probably doesn't make sense to use them, so stay silent?
+  @@@other 'file' related values?
+  -->
+  </dd>
+
+  <dt><code>value</code></dt>
+  <dd>The JSON form library pre-fills the generated form input with the value of this property unless one is already defined in the <code>value</code> section. In practice, this property is typically useful to set the label of a submit button.</dd>
+</dl>
+
+<p>The following declaration tells the JSON form library to generate a form that consists of two groups of form inputs: the first group for inputs related to the application and the second group for inputs related to the author of the application. A submit button, encapsulated in an "actions" section closes the form.</p>
+<pre><code class="json">"form": [
+  {
+    "type": "fieldset",
+    "legend": "Information about the application",
+    "items": [
+      {
+        "key": "abouthtml",
+        "type": "textarea"
+      }
+    ]
+  },
+  {
+    "type": "fieldset",
+    "legend": "Information about the author of the application",
+    "items": [
+      {
+        "key": "author.name",
+        "title": "Nickname",
+        "prepend": "Master"
+      },
+      "author.gender",
+      {
+        "key": "author.magic",
+        "type": "password",
+      }
+    ]
+  },
+  {
+    "type": actions",
+    "items": [
+      {
+        "type": "submit",
+        "value": "Submit"
+      }
+    ]
+  }
+]</code></pre>
+
+<!-- @@@Explain how 'files' work. -->
+
+<h4 id="styles">How to style the generated form</h4>
+
+<p>Most of the markup generated by the JSON form library is composed of raw HTML5 tags. When more semantic is needded, the library follows the class names of the <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> toolkit, e.g. <code>clearfix</code>, <code>input</code>, <code>success</code>, <code>warning</code>, <code>error</code>, <code>help-inline</code>, <code>input-prepend</code>, etc.</p>
+
+<p>The screenshot below shows how the last example of the previous section would be rendered with the Bootstrap stylesheet.</p>
+
+<figure>
+  <img src="/img/jsonform.png" alt="" />
+  <figcaption>Screenshot of the generated form using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> for styles</figcaption>
+</figure>
+
+<p>Check the <a href="http://twitter.github.com/bootstrap/">Bootstrap documentation</a> for details and examples.</p>
+
+
+<h2 id="using">Using the JSON form library</h2>
+
+<p>Joshfire factory users may skip this section: the factory already integrates the JSON form library and exposes the appropriate structured data object to templates.</p>
+
+<h3 id="install">Using the library in a Web page</h3>
+
+<p>The library is a simple JavaScript file that you need to include in the list of scripts of your Web application. It requires the following global objects to be available:</p>
+<ul>
+  <li><code>$</code> defined in <a href="http://jquery.com/">jQuery</a></li>
+  <li><code>_</code> defined in <a href="http://documentcloud.github.com/underscore/">Underscore.js</a></li>
+  <li><code>JSON</code> which should be defined in all modern Web browsers (but you may need to use a dedicated JavaScript library to support older Web browsers)</li>
+</ul>
+
+<p>The library adds two jQuery functions:</p>
+<dl>
+  <dt><code>jsonForm</code></dt>
+  <dd>The function takes a JSON object that follows the <a href="#format">JSON form format</a> as argument. It generates the corresponding HTML form which is used as HTML content of the DOM element the function is applied to.
+  <pre><code class="javascript">$("#form").jsonForm(<em>JSON form format object</em>);</code></pre>
+
+  <dt><code>jsonFormValue</code></dt>
+  <dd>The function does not take any argument. It returns the current structured values object of the JSON form attached to the DOM element the function is applied to, following the data model defined with the form.
+  <pre><code class="javascript">$("#form").jsonForm(<em>JSON form format object</em>);
+// Let the user fill out the form
+<em>[...]</em>
+var dataObject = $("#form").jsonFormValue();</code></pre></dd>
+</dl>
+
+<!--
+@@@ fill out this section once events handling is stabilized.
+@@@ also explains validation process and error messages once supported.
+<h3 id="events">Reacting to events</h3>
+
+<h4 id="submission">Form submission</h4>
+
+<h4 id="input-events">Specific input events</h4>
+-->
