@@ -179,12 +179,12 @@
 <ul>
   <li>The <code>title</code> property serves as label for the input.</li>
   <li>The <code>description</code> property is displayed next to the input field to guide user input.</li>
-  <li>The <code>required</code> property is used to hint at the required nature of the input field with a required flag (typically an asterisk next to the field input).</li>
+  <li>The <code>required</code> property is used to assess the required nature of the input field. Required fields are advertized with an asterisk next to the field input. Required fields are checked upon form submission.</li>
 </ul>
 
 <h4 id="section">Form section description object</h4>
 
-<p>While it is tempting to stick to the use of strings that reference properties in the JSON schema, there are many reasons why you might want to get more control over generated form sections. We've already seen two examples: to generate a "submit" button or to display a larger text input when the expected user input may be long. There are other possible reasons such:</p>
+<p>While it is tempting to stick to the use of strings that reference properties in the JSON schema, there are many reasons why you might want to get more control over generated form sections. We've already seen two examples: to generate a "submit" button or to display a larger text input when the expected user input may be long. There are other possible reasons such as:</p>
 <ul>
   <li>It you ask for a password, you may want to generate a <code>password</code> input.</li>
   <li>If your form gets more complex, you may want to introduce groups of form controls e.g. to ease readibility. You can do it but need to use a specific form section.</li>

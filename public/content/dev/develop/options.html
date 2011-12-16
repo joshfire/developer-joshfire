@@ -4,9 +4,9 @@
 
 <h2>Define additional configuration settings</h2>
 
-<p>The <a href="/doc/ref/package#options">options</a> section in the manifest file specifies additional parameters in the <code>schema</code> subsection and visual hints for the factory for form rendering purpose in the <code>form</code> subsection.</p>
+<p>In the manifest file, additional parameters are defined in the <a href="/doc/ref/package#options">options</a> section. This section follows the <a href="/doc/ref/jsonform#format">JSON form format</a>. It allows templates to define a structured data model and to generate a form out of it that the factory will display in the template configuration pane.</p>
 
-<p>The following manifest code would allow to define a template for the recipes example mentioned above:</p>
+<p>For example, the following manifest code would define a template for the recipes scenario mentioned above:</p>
 <pre><code class="json">{
   "name": "grandma-recipes",
   "fullName": "Grandma's recipes",
@@ -21,23 +21,33 @@
     },
     "options": {
       "schema": {
-        "nickname": {
-          "type": "string",
-          "title": "Grandma's nickname"
-        },
-        "picture": {
-          "type": "string",
-          "title": "A picture of Grandma"
+        "grandma": {
+          "title": "Grandma",
+          "type": "object",
+          "properties": {
+            "nickname": {
+              "type": "string",
+              "title": "Grandma's nickname"
+            },
+            "picture": {
+              "type": "string",
+              "title": "Grandma's picture (URL)"
+            }
+          }
         }
       },
       "form": {
-        "nickname",
-        "picture",
+        "grandma.nickname",
+        "grandma.picture",
         "datasource.recipes"
       }
     }
   }
 }</code></pre>
+
+<p>Check the <a href="/doc/ref/jsonform">JSON form reference</a> for details about supported data types and visual hints that you can provide to guide the look and feel of the HTML form that will be generated.</p>
+
+<p>Pay particular attention to the properties you set for each parameter. For instance, always mark additional parameters that are vital for your template to behave correctly as <code>required</code> (see <a href="/doc/ref/jsonform#default">Default template</a>). This will greatly reduce the likelihood of bugs in the resulting Web application that are due to "typos" in the provided parameters.</p>
 
 
 <h2>Retrieve configuration settings</h2>
@@ -45,12 +55,21 @@
 <p>From the template's code, configuration settings are exposed in the <code>Joshfire.factory.config.template.options</code> object.</p>
 
 <p>For instance, to access Grandma's nickname and picture defined above from the template's code:</p>
-<pre><code class="javascript">var options = Joshfire.factory.config.template.options;
-var grandma = {};
-grandma.nickname = options.nickname;
-grandma.picture = options.picture;</code></pre>
+<pre><code class="javascript">var grandma = Joshfire.factory.config.template.options.grandma;
+var img = document.getElementById("grandma");
+img.src = grandma.picture;
+img.alt = grandma.nickname;</code></pre>
 
 
-<h2>Configuration types</h2>
+<h2>Parameter types</h2>
 
-<p>@@@ jsonform doc</p>
+<p>Supported parameter types are those defined in JSON schema, namely:</p>
+<ul>
+  <li><code>string</code></li>
+  <li><code>number</code></li>
+  <li><code>boolean</code></li>
+</ul>
+
+<p>This list may be completed over time, in particular to define more specific <code>string</code> formats such as URL or HTML to deport data validation to the factory as much as possible. In particular, while your template should not take for granted that an optional parameter will be available, it may assume that its value if present is of the requested type.</p>
+<!-- @@@ Shouldn't we take some liberties with JSON schema here and e.g. use HTML5 input types? -->
+
