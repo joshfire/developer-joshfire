@@ -65,7 +65,7 @@ var news = f.getDataSource("news");</code></pre>
 
 <p>The <code>callback</code> argument follows the <a href="http://nodejs.org/">Node.js</a> convention: its first argument is an error object, and it is <code>undefined</code>/<code>null</code> if the method was successful, its second argument is an instance of a <code>data</code> object.</p>
 
-<p>The <code>data</code> object exposes an <code>entries</code> property whose value is an array of <a href="#datasource-item">datasource items</a>.</p>
+<p>The <code>data</code> object exposes an <code>entries</code> property whose value is an array of <a href="/doc/ref/datasource">datasource items</a>.</p>
 
 <p>Here is a code example that fetches the content of a datasource and extract the info you need in your template:</p>
 <pre><code class="javascript">var news = f.getDataSource("news");
@@ -91,7 +91,7 @@ news.<strong>find</strong>({}, function (err, data) {
 
 <h3 id="multiDatasource">The <code>multiDatasource</code> object</h3>
 
-<p>The <code>getDataSource</code> function returns a <code>multiDatasource</code> object when the datasource input accepts multiple datasource feeds and when the factory user actually bound the input to multiple datasource.</p>
+<p>The <code>getDataSource</code> function returns a <code>multiDatasource</code> object when the datasource input accepts multiple datasource feeds and when the factory user actually bound the input to multiple datasources.</p>
 
 <p>The object exposes one property <code>children</code>, an array of <code>datasource</code> objects.</p>
 
@@ -99,59 +99,6 @@ news.<strong>find</strong>({}, function (err, data) {
 
 <p>Thus, from your template's point of view, whether <code>getDataSource</code> returns a <code>datasource</code> object or a <code>multiDatasource</code> object is transparent for search purpose.</p>
 
-
-<h3 id="datasource-item">The <code>datasource item</code> object</h3>
-
-<p>@@@ This is in flux. We may adopt the hierarchy of <a href="http://schema.org/">schema.org</a>.</p>
-
-<p>The properties of a <code>datasource item</code> object depend on the underlying datasource. Whenever possible and practical, properties match terms of the Dublin Core Metadata Initiate defined in the <a href="http://dublincore.org/documents/dcmi-terms/">DCMI Medata Terms</a> specification.</p>
-
-<p>Your template should not rely on specific properties. It should rather be very flexible in the types of objects it handles, or ignore those it cannot process. Also, bear in mind that the factory allows users to define a datasource feed as the union of atomic datasource feeds. Thus, there is no guarantee that all datasource items will be of the same type.</p>
-
-<p>Usual properties are (in alphabetic order):</p>
-<dl>
-  <dt><a href="http://dublincore.org/documents/dcmi-terms/#terms-abstract"><code>abstract</code></a></dt>
-  <dd>A summary of the item. No maximum length defined, the abstract should be one paragraph long in most cases.</dd>
-
-  <dt><a href="http://dublincore.org/documents/dcmi-terms/#terms-date"><code>date</code></a></dt>
-  <dd>The publication date of the item.
-  <br/>A string that follows the ISO 8601 format.</dd>
-
-  <dt><a href="http://dublincore.org/documents/dcmi-terms/#terms-identifier"><code>identifier</code></a></dt>
-  <dd>An identification number for the item. A string.
-  <br/>The identifier is unique within an items list returned by a call to <code>find</code> but not necessarily unique across calls.</dd>
-
-  <dt><code>image</code></dt>
-  <dd>A link to a thumbnail image that represents the item.</dd>
-
-  <dt><code>photo</code></dt>
-  <dd>A link to the (potentially large) main image featured in the item. The property is typically defined when the item type is <code>picture</code>.</dd>
-
-  <dt><a href="http://dublincore.org/documents/dcmi-terms/#elements-subject"><code>subject</code></a></dt>
-  <dd>The main topic of the item. A short string.</dd>
-
-  <dt><a href="http://dublincore.org/documents/dcmi-terms/#elements-title"><code>title</code></a></dt>
-  <dd>The title of the item, defined as a short string.</dd>
-
-  <dt><a href="http://dublincore.org/documents/dcmi-terms/#elements-type"><code>type</code></a></dt>
-  <dd>The nature or genre of the item. Possible values:
-  <br/>
-  <ul>
-    <li>text</li>
-    <li>picture</li>
-    <li>video</li>
-    <li>event</li>
-  </ul>
-  The list will be completed over time.
-  <br/>Note the factory does not necessarily follow the <a href="http://dublincore.org/documents/dcmi-type-vocabulary/">DCMI type vocabulary</a>, preferring "video" over "MovingImage" and "picture" over "StillImage".</dd>
-
-  <dt><code>url</code></dt>
-  <dd>A link to the source of the item on the Web.
-  <br/>For instance, the property would point to the Flickr page that details a picture when the item features a Flickr picture.</dd>
-
-  <dt><code>video</code></dt>
-  <dd>A link to the main video featured in the item. The property is typically defined when the item type is <code>video</code>.</dd>
-</dl>
 
 <h2 id="application-settings">Application configuration settings</h2>
 
@@ -162,8 +109,8 @@ news.<strong>find</strong>({}, function (err, data) {
 <pre><code class="json">{
   "name": "The Colbert daily",
   "description": "Read and watch Colbert's latest news",
-  "icon" : <em>imageObject</em>,
-  "logo": <em>imageObject</em>,
+  "icon" : <em>image object</em>,
+  "logo": <em>image object</em>,
   "version": "1.0.1"
 }</code></pre>
 
@@ -174,11 +121,11 @@ news.<strong>find</strong>({}, function (err, data) {
   <dt><code>description</code></dt>
   <dd>A string that describes the purpose of the application.</dd>
   <dt><code>icon</code></dt>
-  <dd>An <code>imageObject</code> used as icon in application stores and application icon.
+  <dd>An <code>image</code> object used as icon in application stores and application icon.
   <br/>Image size: <code>1024x1024</code>.
   <br/>32-bit PNG or JPEG.</dd>
   <dt><code>logo</code></dt>
-  <dd>An <code>imageObject</code> that describes the logo of the application.
+  <dd>An <code>image object</code> that describes the logo of the application.
   <br/>Image width: <code>2048 pixels</code>. Portrait mode.
   <br/>32-bit PNG on a transparent background.</dd>
   <dt><code>version</code></dt>
@@ -186,7 +133,7 @@ news.<strong>find</strong>({}, function (err, data) {
 </dl>
 <p>Properties may not be defined when the user did not enter any specific value. Templates must degrade gracefully in the absence of any of these properties.</p>
 
-<h3 id="imageObject">The <code>imageObject</code> object</h3>
+<h3 id="imageObject">The <code>image</code> object</h3>
 
 <p>An <code>imageObject</code> contains meta-information about an image.</p> 
 <pre><code class="json">{

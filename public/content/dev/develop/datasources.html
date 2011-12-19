@@ -37,13 +37,11 @@
 
 <h2>Fetch datasource feeds</h2>
 
-<p>Once you have defined your datasource inputs in the manifest file, factory users can bind them to datasources feeds. You now need to write code in your template to retrieve and render content from these datasources feeds.</p>
+<p>Once you have defined your datasource inputs in the manifest file, factory users can bind them to datasources feeds. You now need to write code in your template to retrieve and render them.</p>
 
-<p>To fetch these feeds, use the <a href="/doc/ref/templateapi#datasource-find">find</a> method of <code>datasource</code> objects returned by the <a href="/doc/ref/templateapi#getDataSource">getDataSource</a> method. The <code>find</code> method uses a data proxy run by Joshfire that serves as interface between your template and content service providers: it sends the appropriate requests to service providers and normalize the responses it receives to ease processing in your template afterwards.</p>
+<p>Use the <a href="/doc/ref/templateapi#datasource-find">find</a> method of the <code>datasource</code> object returned by the <a href="/doc/ref/templateapi#getDataSource">getDataSource</a> method to fetch a feed. Depending on the datasource and on factory user's choices, the <code>find</code> method may either run locally and connect directly to service providers, or proxy through a data server run by Joshfire. You do not need to worry about the method that gets used: in both cases, the data that your template will see is the same.</p>
 
-<p>In practice, the callback method that gets called when the feed becomes available is given an array of <a href="/doc/ref/templateapi#datasource-item">datasource items</a> that may represent different types of data (e.g. pictures, videos, blog posts, event). These datasource items share the same structure, exposing similar properties whenever possible (a "picture" may not make sense for an event for instance).</p>
-
-<p>The first argument of the <code>find</code> may be used to retrieve slices of data in a set, for instance to retrieve the next 10 items, skipping the first 40 items. The options are similar to options used in <a href="http://www.mongodb.org/display/DOCS/Querying#Querying-QueryOptions">MongoDB</a>. The following example shows to implement the "skip 40, get 10" scenario:</p>
+<p>The first argument of the <code>find</code> may be used to retrieve slices of data in a set, for instance to retrieve the next 10 items, skipping the first 40 items. The options are similar to options used in <a href="http://www.mongodb.org/display/DOCS/Querying#Querying-QueryOptions">MongoDB</a>. The following example shows how to implement the "skip 40, get 10" scenario:</p>
 
 <pre><code class="javascript">var recipes = Joshfire.factory.getDataSource("recipes");
 recipes.find(
@@ -52,54 +50,69 @@ recipes.find(
     skip: 40
   }</strong>,
   function (err, data) {
-    // Process data entries
+    // Process data entries in data.entries
   }
 );</code></pre>
 
 
-<h2>Deal with datasource types</h2>
+<h2>Deal with datasource feeds</h2>
 
-<p>@@@ This is still in flux.</p>
+<p>The factory does not simply forward the request to the appropriate datasource provider. It also normalizes the answer to ease the integration of datasources within your template. Datasource items may be coming from very different sources: Flickr, Google, Tumblr, Twitter, Youtube, identi.ca, a blog, an ical calendar, etc. If you were to follow each provider's API documentation, developing your template would basically take forever... and the resulting template would not even accept additional datasource types! Fortunately, the factory takes care of abstracting away that complexity.</p>
 
-Text based content.
-Photos.
-Videos.
-Events.
-Locations.
-Tabular data.
+<p>The callback method that gets called when the feed becomes available is given an array of <a href="/doc/ref/templateapi#datasource-item">datasource items</a> that represent different types of data (e.g. pictures, videos, blog posts, event). These datasource items all share the same structure, exposing the same properties whenever possible (the "name" property can always serve as title, for instance, while the "image" property may not make sense for an event).</p>
 
-Tumblr has text, quote, link, answer, video, audio, photo, chat (http://www.tumblr.com/docs/en/api/v2#posts)
+<p>In practice, the factory uses <a href="http://schema.org">schema.org</a> at its core. Schema.org provides a collection of schemas that can be used to enrich the markup of Web pages in ways recognized by major search providers. In particular, it defines a type hierarchy to describe "things" on the Web, for instance an <a href="http://schema.org/ImageObject">ImageObject</a> or a <a href="http://schema.org/Person">Person</a>. All datasource items can be thought as instances of a <a href="http://schema.org/Thing">Thing</a>.</p>
 
-Common properties:
-- identifier
-- type
-- date
-- format ?
-- source ?
-- title
+<p>Items returned in datasource feeds may be of very different types: an image, a video, a person, an article, a microblogging status, a point of interest on Earth, an event, a Web page, etc. Schema.org does not necessarily define a specialized class for each of them. The <a href="/doc/ref/datasource">datasource items reference</a> details used extensions to schema.org as well as a few properties that were taken from other vocabularies.</p>
 
-Most of the time:
-- image
+<p>Main data types that your template should expect to deal with:</p>
+<ul>
+  <li>An <a href="http://schema.org/Article">Article</a> for RSS feed items.</li>
+  <li>An <a href="http://schema.org/ImageObject">ImageObject</a> for pictures.</li>
+  <li>A <a href="http://schema.org/VideoObject">VideoObject</a> for videos.</li>
+  <li>An <a href="http://schema.org/Event">Event</a> for calendar items.</li>
+  <li>A <a href="http://schema.org/Person">Person</a> for an item in a list of contact, an author or similar.</li>
+</ul>
 
+<p>The item type should only serve to identify main datasource item types. Your template should rather react based on the presence of specific properties whenever possible for maximum flexibility.</p>
 
-Business type:
-- very specific.
+<p>Main item properties that you will use are:</p>
+<ul>
+  <li><code>name</code>: title of an article, image caption, etc.</li>
+  <li><code>description</code>: a short abstract for the item.</li>
+  <li><code>url</code>: a URL that serves as identifier for the item (note this URL may not be dereferenceable and should not be used to link to the item).</li>
+  <li><code>itemType</code>: the specific type of the item. Note this property is not defined in schema.org. It carries the "class name" of the object.</li>
+  <li><code>image</code>: an image for the item, which you can typically use as a thumbnail.</li>
+  <li><code>datePublished</code>: the publication date associated with the item (ISO8601 string).</li>
+</ul>
 
-Sites à consulter pour les vocabulaires:
-- http://dublincore.org/
-- http://sioc-project.org/
-- http://schema.org/ (Google, Microsoft, Yahoo! et d'autres)
-- http://semanticweb.org/wiki/Ontology
+<p>Other properties may depend on the specific type of an item, such as <code>contentURL</code> to get the address of an image or <code>author</code> to get the person behind a creative work.</p>
 
-Pour les préfixes usuels: http://prefix.cc/
+<p>Please note that these properties may not always be set. In fact, most of the properties defined in schema.org for a specific item type won't be set in the returned feed. That's normal! Datasource providers do not expose all possible information about an item. As much as practical, your template should not rely on the item properties being defined.</p>
 
+<p>The following example would render an hypothetical list of recipes:</p>
+<pre><code class="javascript">var recipes = Joshfire.factory.getDataSource("recipes");
+recipes.find(
+  <strong>{
+    limit: 10,
+    skip: 40
+  }</strong>,
+  function (err, data) {
+    // NB: you should check for err and re-assess the need
+    // to render items first. We'll skip that for brevity.
+    var html = "";
+    _.map(data.entries, function (entry, idx) {
+      html += "&amp;lt;li&amp;gt;&amp;lt;span class='title'&gt;" + entry.name + "&amp;lt;/span&gt;"
+        + "&amp;lt;br/&amp;gt;" + entry.description;
+      if (entry.image) {
+        html += "&amp;lt;span class='thumbnail'&amp;gt;&amp;lt;img src='"
+          + entry.image.contentURL
+          + "' alt='" + entry.image.name + "'" /&amp;gt;"
+          + "&amp;lt;/span&amp;gt;";
+      }
+    });
+    document.getElementById('entries').innerHTML = html;
+  }
+);</code></pre>
 
-<h3>Pictures</h3>
-
-<h3>Videos</h3>
-
-<h3>Blog post</h3>
-
-<h3>Spreadsheets</h3>
-
-<h3>Event</h3>
+<p>Please note that the code in this example makes a few assumptions for brevity purpose. You should not assume that entries still need to be rendered when the callback method gets called for instance.</p>
