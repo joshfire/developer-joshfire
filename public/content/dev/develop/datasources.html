@@ -54,12 +54,14 @@ recipes.find(
   }
 );</code></pre>
 
+<p>Bear in mind that many datasource providers apply throttling limits: if you exceed the limit, the service will reject the request with a « quota exceeded » error. You should adopt a very conservative approach with datasource requests in your template, typically restricting fetch requests to user initiated actions.</p>
+
 
 <h2>Deal with datasource feeds</h2>
 
 <p>The factory does not simply forward the request to the appropriate datasource provider. It also normalizes the answer to ease the integration of datasources within your template. Datasource items may be coming from very different sources: Flickr, Google, Tumblr, Twitter, Youtube, identi.ca, a blog, an ical calendar, etc. If you were to follow each provider's API documentation, developing your template would basically take forever... and the resulting template would not even accept additional datasource types! Fortunately, the factory takes care of abstracting away that complexity.</p>
 
-<p>The callback method that gets called when the feed becomes available is given an array of <a href="/doc/ref/templateapi#datasource-item">datasource items</a> that represent different types of data (e.g. pictures, videos, blog posts, event). These datasource items all share the same structure, exposing the same properties whenever possible (the "name" property can always serve as title, for instance, while the "image" property may not make sense for an event).</p>
+<p>The callback method that gets called when the feed becomes available is given an array of <a href="/doc/ref/datasource">datasource items</a> that represent different types of data (e.g. pictures, videos, blog posts, event). These datasource items all share the same structure, exposing the same properties whenever possible (the "name" property can always serve as title, for instance, while the "image" property may not make sense for an event).</p>
 
 <p>In practice, the factory uses <a href="http://schema.org">schema.org</a> at its core. Schema.org provides a collection of schemas that can be used to enrich the markup of Web pages in ways recognized by major search providers. In particular, it defines a type hierarchy to describe "things" on the Web, for instance an <a href="http://schema.org/ImageObject">ImageObject</a> or a <a href="http://schema.org/Person">Person</a>. All datasource items can be thought as instances of a <a href="http://schema.org/Thing">Thing</a>.</p>
 
