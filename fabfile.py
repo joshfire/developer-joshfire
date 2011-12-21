@@ -31,7 +31,7 @@ def deploy():
     run('cd %s/releases/%s ; npm install' % (env.path,env.release))
     run("cd %s/releases/%s ; mv package.json{,.orig} ; node fab_helpers/deploy_package_json.js %s/releases/%s < package.json.orig > package.json""" % (env.path, env.release, env.path, env.release))
     symlink_current_release()
-#    haibu_restart()
+    haibu_restart()
 
 
 def haibu_restart():
@@ -52,7 +52,7 @@ def export():
     local("rm -rf %s/*" % (env.export_dir))
     local("cp -RL public %s/" % (env.export_dir))
 
-    local("cp -a fab_helpers %s" % (env.export_dir)
+    local("cp -a fab_helpers %s" % (env.export_dir))
 
     compile("export-optimized/")
     
@@ -62,6 +62,7 @@ def export():
 
     for f in ["node.cli.js","package.json","src","templates_compiled","joshfire"]:
       local("cp -RL %s %s/" % (f,env.export_dir))
+    local("cp -a main.js %s/" % (env.export_dir))
 
     cnt = open(os.path.join(env.export_dir,"node.cli.js"),"r").read()
     f = open(os.path.join(env.export_dir,"node.cli.js"),"w")
