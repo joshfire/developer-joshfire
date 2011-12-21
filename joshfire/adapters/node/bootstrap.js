@@ -2180,7 +2180,9 @@
 
   var fileName = process.argv[2];
 
-  if (!fileName) fileName = 'main.js';
+  // --hook-port is because haibu does not allow parameters to be passed (eg forcing us
+  // to use main.js) _but_ passes parameters itself, the first one being --hook-port
+  if (!fileName || fileName == '--hook-port') fileName = 'main.js';
 
 
   //todo data-main argument ?
