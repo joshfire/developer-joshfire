@@ -10,5 +10,9 @@
     "mkdirp": "0.0.x",
     "node-uuid": "1.2.x"
   },
-  "engine": "node 0.4.x"
+  "engine": "node 0.4.x",
+  "user": "joshfire",
+  "scripts" : {
+    "start": "joshfire/adapters/node/bootstrap.js" 
+  }
 }
