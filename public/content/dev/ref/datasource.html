@@ -4,38 +4,201 @@
 
 <p>Schema.org is easy to use in JavaScript (property names are straightforward, no complex and error-prone namespace rules to support) and already defines most useful types of Web items, e.g. an <a href="http://schema.org/Article">Article</a> to describe an item in an RSS feed.</p>
 
-<p>Datasource item objects returned by datasource connection points follow the hierarchy, properties and expected value types of schema.org whenever possible. Here is a possible JSON serialization of an article for instance:</p>
+<p>Datasource item objects returned by datasource connection points follow the hierarchy, properties and expected value types of schema.org whenever possible. Apart from <a href="#extensions" title="Extensions to schema.org">extensions mentioned below</a>, the mapping between the type hierarchy defined in schema.org and JSON is straightforward. Use the <a href="http://schema.org/docs/full.html">documentation of schema.org</a> to learn about properties and values you may receive for a given type of item.</p>
+
+<p>Here is a possible JSON serialization of an article taken from an RSS feed:</p>
 
 <pre><code class="json">{
-  "itemType": "Article",
-  "name": "Joshfire factory propels Web apps to heaven!",
-  "description": "Joshfire just released a factory to build and deploy content-based Web applications that work across terminals in a snap.",
-  "datePublished": "2012-01-15T08:23:00Z",
-  "author": {
-    "itemType": "Person",
-    "name": "Francois Daoust"
+  "<a href="#prop-itemType">itemType</a>": "Article",
+  "<a href="#prop-name">name</a>": "Joshfire factory propels Web apps to heaven!",
+  "<a href="#prop-description">description</a>": "Joshfire just released a factory to build and deploy content-based Web applications that work across terminals in a snap.",
+  "<a href="#prop-datePublished">datePublished</a>": "2012-01-15T08:23:00Z",
+  "<a href="#prop-author">author</a>": {
+    "<a href="#prop-itemType">itemType</a>": "Person",
+    "<a href="#prop-name">name</a>": "Francois Daoust"
   },
-  "publisher": {
-    "itemType": "Organization",
-    "url": "http://joshfire.com/",
-    "name": "Joshfire"
+  "<a href="#prop-publisher">publisher</a>": {
+    "<a href="#prop-itemType">itemType</a>": "Organization",
+    "<a href="#prop-url">url</a>": "http://joshfire.com/",
+    "<a href="#prop-name">name</a>": "Joshfire"
   }
-  "articleBody": "&lt;p&gt;The future of the Web is now. Today, Joshfire unveals <em>…</em>&lt;/p&gt;"
+  "<a href="#prop-articleBody">articleBody</a>": "&lt;p&gt;The future of the Web is now. Today, Joshfire unveals <em>…</em>&lt;/p&gt;"
 }</code></pre>
 
-<p>Apart from extensions mentioned below (the <code>itemType</code> property in particular), the mapping between the type hierarchy defined in schema.org and JSON is straightforward.</p>
+
+<h2 id="types">Main item types</h2>
+
+<p>Your template may basically receive any type of <a href="http://schema.org/Thing">Thing</a>, and the effective list of types that the factory may generate will grow over time. Your template should be as flexible as possible in the types of objects it handles, ignoring those it cannot process. Whenever possible, you should not base your code on the type of item you received, but rather on the properties it defines. That said, you may still want to react more specifically to a few specific types, including:</p>
+
+<ul>
+  <li><a href="http://schema.org/BlogPosting">BlogPosting</a> for blog posts.</li>
+  <li><a href="http://schema.org/Article">Article</a> for other types of RSS feed items.</li>
+  <li><a href="#extensions-status">Article/Status</a> for microblogging status messages.</li>
+  <li><a href="http://schema.org/ImageObject">ImageObject</a> for pictures.</li>
+  <li><a href="http://schema.org/VideoObject">VideoObject</a> for videos.</li>
+  <li><a href="http://schema.org/Event">Event</a> for calendar items.</li>
+  <li><a href="http://schema.org/Person">Person</a> for an item in a list of contact, an author or similar.</li>
+  <li><a href="http://schema.org/Place">Place</a> for a point of interest on Earth.</li>
+</ul>
+
+<p>Bear in mind that the factory allows users to define a datasource feed as a union of atomic datasource feeds. Among other things, this means that there is no guarantee that all datasource items in a given feed are of the same type.</p>
+
+
+<h2 id="datasource-item-prop">Main properties</h2>
+
+<p>Please refer to <a href="http://schema.org/docs/full.html">schema.org</a> for information about properties and their expected types. The most common properties are listed below in alphabetic order.</p>
+
+<p>In theory, all properties defined in schema.org accept multiple values. In practice, it does not make sense to expect multiple <a href="#prop-datePublished"><code>datePublished</code></a> values or multiple <a href="#prop-description"><code>description</code></a>. To ease integration, the factory always returns:</p>
+<ul>
+  <li>an <strong>array</strong> for properties that can take multiple values, even when there is only one value to return;</li>
+  <li>an <strong>atomic value</strong> for all other properties (string, number, object).</li>
+</ul>
+<p>Unless explicitly stated in the list below, your code may assume that the property returns an atomic value.</p>
+
+<h3 id="prop-articleBody"><code>articleBody</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The content of an article.</dd>
+  <dt>JSON type</dt>
+  <dd>A string. To be interpreted as HTML.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/Article">Article</a></dd>
+</dl>
+
+<h3 id="prop-author"><code>author</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The list of authors of the item.
+  <br/>(Note most items only have one author)</dd>
+  <dt>JSON type</dt>
+  <dd>An array of <a href="http://schema.org/Person">Person</a>.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/CreativeWork">CreativeWork</a></dd>
+</dl>
+
+<h3 id="prop-contenturl"><code>contentURL</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The URL of the actual bytes of the media content (audio, image, video). This property is set in <code>AudioObject</code>, <code>ImageObject</code> and <code>VideoObject</code>. It can be used to link to the underlying content from the <code>src</code> attribute of an <code>audio</code>, <code>img</code> or <code>video</code> tag.
+  <br/>Multiple encodings may be specified in the <code>encodings</code> property. This is particularly useful for audio and video content since Web browsers may not all support the same content format. The <code>contentURL</code> property links to the canonical version of the media object. It is usually a copy of the first object in the <code>encodings</code> array, when this array is defined.</dd>
+  <dt>JSON type</dt>
+  <dd>A string. To be interpreted as an absolute URL.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/MediaObject">MediaObject</a></dd>
+</dl>
+
+<h3 id="prop-datePublished"><code>datePublished</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The publication date of the item. This is the preferred way to associate a date with an item (although other date-related properties such as <code>dateCreated</code> or <code>dateModified</code> may be set).</dd>
+  <dt>JSON type</dt>
+  <dd>A string that follows the <a href="http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/date_and_time_format.htm">ISO 8601</a> format.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/CreativeWork">CreativeWork</a></dd>
+</dl>
+
+<h3 id="prop-description"><code>description</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>A summary of the item. No maximum length defined. The abstract should be one paragraph long in most cases.
+  <br/>Use this property as item description. In a list of items on a mobile, you may need to shrink the description to an acceptable minimum.</dd>
+  <dt>JSON type</dt>
+  <dd>A string to be interpreted as raw text (no HTML markup).</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/Thing">Thing</a></dd>
+</dl>
+
+<h3 id="prop-encodings"><code>encodings</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The list of alternative versions of a media content (audio or video in particular).
+  <br/>For images, it is safe to use the <code>contentURL</code> property of the parent object directly. For audio and video content, the format of the parent object may not be supported by the Web browsers that runs the Web application. Use this property to specify alternative versions in <code>&lt;source&gt;</code> tags.</dd>
+  <dt>JSON type</dt>
+  <dd>An array of <a href="http://schema.org/MediaObject">MediaObject</a>.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/MediaObject">MediaObject</a></dd>
+</dl>
+
+<h3 id="prop-image"><code>image</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The image of an item.
+  <br/>Use this image as thumbnail for the item even when the <code>thumbnail</code> property is set. The URL of the underlying image is set <code>image.contentURL</code>.</dd>
+  <dt>JSON type</dt>
+  <dd>An <a href="http://schema.org/ImageObject">ImageObject</a>.
+  <br/>Note this is a deviation from schema.org which expects a url for the property. We expect to resolve that conflict in the future.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/Thing">Thing</a></dd>
+</dl>
+
+<h3 id="prop-itemType"><code>itemType</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The type of an item.</dd>
+  <dt>JSON type</dt>
+  <dd>A string that matches one of the type names defined in the hierarchy of schema.org.
+  <br/>Example values: <code>Article</code>, <code>Person</code>, <code>ImageObject</code>.</dd>
+  <dt>Defined in</dt>
+  <dd>This property is not defined in schema.org but set to allow item type identification.</dd>
+</dl>
+
+<h3 id="prop-name"><code>name</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The name of the item. In practice, the title of an article, the caption of an image or a video, the complete name of a person, the status message, etc. The property is set in all but exceptional cases. Use its value as label for the item in a list or as title in a detailed view.</dd>
+  <dt>JSON type</dt>
+  <dd>A string.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/Thing">Thing</a></dd>
+</dl>
+
+<h3 id="prop-publisher"><code>publisher</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>The organization that publishes the item (Flickr, Google, Youtube, etc.)</dd>
+  <dt>JSON type</dt>
+  <dd>An <a href="http://schema.org/Organization">Organization</a>.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/CreativeWork">CreativeWork</a></dd>
+</dl>
+
+<h3 id="prop-thumbnail"><code>thumbnail</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>A list of images that describe the item at various resolutions.
+  <br/>The first thumbnail is the same image as the one set in the <code>image</code> property.</dd>
+  <dt>JSON type</dt>
+  <dd>An array of <a href="http://schema.org/ImageObject">ImageObject</a>.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/ImageObject">ImageObject</a> and <a href="http://schema.org/VideoObject">VideoObject</a>.</dd>
+</dl>
+<p></p>
+<p></p>
+<p></p>
+
+
+<h3 id="prop-url"><code>url</code></h3>
+<dl>
+  <dt>Description</dt>
+  <dd>URL of the item. This URL serves as identifier and may not be dereferenceable (for instance, it may be a URN).
+  <br/>The property may not be defined when the datasource does not return a useful item identifier.</dd>
+  <dt>JSON type</dt>
+  <dd>A string to be interpreted as an absolute URN.</dd>
+  <dt>Defined in</dt>
+  <dd><a href="http://schema.org/"></a></dd>
+</dl>
 
 
 <h2 id="extensions">Extensions to schema.org</h4>
 
-<p>Schema.org is not complete and does not intend to be (representing things on the Web is always a trade-off between usability and completeness). There are no specific type that could be used to describe a microblogging status as of today for instance. Whenever needed, and only when needed), the factory needs to extend the schema. To understand the design choices that were made, it is helpful to consider three different types of extension:</p>
+<p>Representing things on the Web is always a trade-off between usability and completeness. Schema.org does not include a specific type that could be used to describe a microblogging status message as of today for instance. The factory extends the schema whenever needed (and only when needed!). To understand the design choices that were made, it is helpful to consider three different types of extension:</p>
 <ol>
-  <li><strong>Extensions needed to map schema.org to JSON</strong>: Schema.org was designed to apply to Web pages through microdata, microformat, RDFa or similar mechanisms. In all cases, the starting point is the underlying content of the Web page, which gets marked up with attributes such as <code>itemscope</code> and <code>itemtype</code> to identify the relevant portion of the page and its type. This starting point does not exist with JSON data. To keep the structure simple, the factory uses two additional properties: <code>itemType</code> and <code>content</code>.</li>
+  <li><strong>Extensions needed to map schema.org to JSON</strong>: Schema.org was designed to apply to Web pages through microdata, microformat, RDFa or similar mechanisms. In all of these cases, the starting point is the underlying content of the Web page, which gets flagged with attributes such as <code>itemscope</code> and <code>itemtype</code> to identify the relevant portion of the page and its type. This starting point does not exist with JSON data. To keep the structure simple, the factory uses two additional properties: <code>itemType</code> and <code>content</code>.</li>
   <li><strong>New properties</strong>: the list of properties defined in the schema cannot always be mapped to datasource items. The factory "reluctantly" (i.e. only when there is no good alternative) introduces properties if needed, using other vocabularies whenever possible. Such properties are namespaced with a prefix to avoid potential conflicts with future versions of schema.org.</li>
   <li><strong>New item types</strong>: the schema does not always define a specific class for the type of items a datasource may return. The <a href="http://schema.org/docs/extension.html">Extension Mechanism</a> of schema.org gets used when the case arises.</li>
 </ol>
 
-<p>Extensions used by the factory fall in one of these buckets.</p>
+<p>Extensions used by the factory fall in one of these three buckets.</p>
 
 
 <h3 id="extensions-itemType">The <code>itemType</code> property</h3>
@@ -119,96 +282,4 @@
   "gsx:text": "Incredible",
   "gsx:number": "1"
 }</code></pre>
-
-
-<h2 id="types">Main item types</h2>
-
-<p>Your template may basically receive any kind of item. You may want to react more specifically with a few of them, including:</p>
-
-<ul>
-  <li><a href="http://schema.org/BlogPosting">BlogPosting</a> for blog posts.</li>
-  <li><a href="http://schema.org/Article">Article</a> for other types of RSS feed items.</li>
-  <li><a href="#extensions-status">Article/Status</a> for microblogging status messages.</li>
-  <li><a href="http://schema.org/ImageObject">ImageObject</a> for pictures.</li>
-  <li><a href="http://schema.org/VideoObject">VideoObject</a> for videos.</li>
-  <li><a href="http://schema.org/Event">Event</a> for calendar items.</li>
-  <li><a href="http://schema.org/Person">Person</a> for an item in a list of contact, an author or similar.</li>
-</ul>
-
-
-<h2 id="datasource-item-prop">Main properties</h2>
-
-<p>Your template should not be restricted to specific item types. It should rather be very flexible in the types of objects it handles, or ignore those it cannot process. Also, bear in mind that the factory allows users to define a datasource feed as the union of atomic datasource feeds. Thus, there is no guarantee that all datasource items will be of the same type.</p>
-
-<p>Usual properties are listed below in alphabetic order.</p>
-
-<h3 id="prop-articleBody"><code>articleBody</code></h3>
-<p>The content of an article.</p>
-<p>An HTML string.</p>
-
-<h3 id="prop-author"><code>author</code></h3>
-<p>The list of authors of the item.</p>
-<p>An array of <a href="http://schema.org/Person">Person</a>.</p>
-<p>Most items have only one author. In such cases, the property is an array that contains one element.</p>
-
-<h3 id="prop-contenturl"><code>contentURL</code></h3>
-<p>The URL of the actual bytes of the media content (audio, image, video).</p>
-<p>A string (a URL).</p>
-<p>This property is set in <code>AudioObject</code>, <code>ImageObject</code>, <code>VideoObject</code>. It can be used to link to the underlying content from the <code>src</code> attribute of an <code>audio</code>, <code>img</code> or <code>video</code> tag.</p>
-
-<p>Multiple encodings may be specified in the <code>encodings</code> property. This is particularly useful for audio and video content since Web browsers may not all support the same content format. The <code>contentURL</code> property links to the canonical version of the media object. It is usually a copy of the first object in the <code>encodings</code> array, when this array is defined.</p>
-
-
-<h3 id="prop-datePublished"><code>datePublished</code></h3>
-<p>The publication date of the item.</p>
-<p>A string that follows the ISO 8601 format.</p>
-<p>The property is not set when publication date is unknown.</p>
-
-<h3 id="prop-description"><code>description</code></h3>
-<p>A summary of the item.</p>
-<p>A string of raw text, no markup. No maximum length defined. The abstract should be one paragraph long in most cases.</p>
-<p>Use this property as item description. In a list of items on a mobile, you may need to shrink the description to an acceptable minimum.</p>
-
-
-<h3 id="prop-encodings"><code>encodings</code></h3>
-<p>The list of alternative versions of a media content (audio or video in particular).</p>
-<p>An array of <a href="http://schema.org/MediaObject">MediaObject</a>.</p>
-<p>For images, it is safe to use the <code>contentURL</code> property of the parent object directly. For audio and video content, the format of the parent object may not be supported by the Web browsers that runs the Web application. Use this property to specify alternative versions in <code>&lt;source&gt;</code> tags.</p>
-
-
-<h3 id="prop-image"><code>image</code></h3>
-<p>The image of an item.</p>
-<p>An <a href="http://schema.org/ImageObject">ImageObject</a>. Note this is a deviation from schema.org which expects a url for the property. We expect to resolve that conflict in the future.</p>
-<p>Use this image as thumbnail for the item even when the <code>thumbnail</code> property is set. The URL of the underlying image is set <code>image.contentURL</code>.</p>
-
-
-<h3 id="prop-itemType"><code>itemType</code></h3>
-<p>The type of an item.</p>
-<p>A string that matches one of the types defined in the hierarchy of schema.org.</p>
-<p>Example values: <code>Article</code>, <code>Person</code>, <code>ImageObject</code>.</p>
-<p>This property is not defined in schema.org but set to allow item type identification.</p>
-
-
-<h3 id="prop-name"><code>name</code></h3>
-<p>The name of the item. In practice, the title of an article, the caption of an image or a video, the complete name of a person, the status message, etc. The property is set in all but exceptional cases. Use its value as label for the item in a list or as title in a detailed view.</p>
-<p>A string.</p>
-
-
-<h3 id="prop-publisher"><code>publisher</code></h3>
-<p>The organization that publishes the item (Flickr, Google, Youtube, etc.)</p>
-<p>An <a href="http://schema.org/Organization">Organization</a>.</p>
-
-
-<h3 id="prop-thumbnail"><code>thumbnail</code></h3>
-<p>A list of images that describe the item at various resolutions.</p>
-<p>An array of <a href="http://schema.org/ImageObject">ImageObject</a>.</p>
-<p>The property is only defined in <code>ImageObject</code> and <code>VideoObject</code>. The first thumbnail is the same image as the one set in the <code>image</code> property.</p>
-
-
-<h3 id="prop-url"><code>url</code></h3>
-<p>URL of the item. This URL serves as identifier and may not be dereferenceable (for instance, it may be a URN).</p>
-<p>A string (a URL).</p>
-<p>The property may not be defined when the datasource does not return a useful item identifier.</p>
-
-
 

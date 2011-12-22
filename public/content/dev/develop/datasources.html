@@ -59,13 +59,13 @@ recipes.find(
 
 <h2>Deal with datasource feeds</h2>
 
-<p>The factory does not simply forward the request to the appropriate datasource provider. It also normalizes the answer to ease the integration of datasources within your template. Datasource items may be coming from very different sources: Flickr, Google, Tumblr, Twitter, Youtube, identi.ca, a blog, an ical calendar, etc. If you were to follow each provider's API documentation, developing your template would basically take forever... and the resulting template would not even accept additional datasource types! Fortunately, the factory takes care of abstracting away that complexity.</p>
+<p>Datasource items may be coming from very different sources: Flickr, Google, Tumblr, Twitter, Youtube, identi.ca, a blog, an ical calendar, etc. If you were to follow each provider's API documentation, developing your template would basically take forever... and the resulting template would not even accept additional datasource types! Fortunately, the factory takes care of abstracting away that complexity and normalize the answers coming from these service providers.</p>
 
 <p>The callback method that gets called when the feed becomes available is given an array of <a href="/doc/ref/datasource">datasource items</a> that represent different types of data (e.g. pictures, videos, blog posts, event). These datasource items all share the same structure, exposing the same properties whenever possible (the "name" property can always serve as title, for instance, while the "image" property may not make sense for an event).</p>
 
 <p>In practice, the factory uses <a href="http://schema.org">schema.org</a> at its core. Schema.org provides a collection of schemas that can be used to enrich the markup of Web pages in ways recognized by major search providers. In particular, it defines a type hierarchy to describe "things" on the Web, for instance an <a href="http://schema.org/ImageObject">ImageObject</a> or a <a href="http://schema.org/Person">Person</a>. All datasource items can be thought as instances of a <a href="http://schema.org/Thing">Thing</a>.</p>
 
-<p>Items returned in datasource feeds may be of very different types: an image, a video, a person, an article, a microblogging status, a point of interest on Earth, an event, a Web page, etc. Schema.org does not necessarily define a specialized class for each of them. The <a href="/doc/ref/datasource">datasource items reference</a> details used extensions to schema.org as well as a few properties that were taken from other vocabularies.</p>
+<p>Items returned in datasource feeds may be of very different types: an image, a video, a person, an article, a microblogging status, a point of interest on Earth, an event, a Web page, etc. Schema.org does not necessarily define a specialized class for each of them. The <a href="/doc/ref/datasource">datasource items reference</a> details extensions to schema.org as well as properties from other vocabularies that the factory uses.</p>
 
 <p>Main data types that your template should expect to deal with:</p>
 <ul>
@@ -74,9 +74,10 @@ recipes.find(
   <li>A <a href="http://schema.org/VideoObject">VideoObject</a> for videos.</li>
   <li>An <a href="http://schema.org/Event">Event</a> for calendar items.</li>
   <li>A <a href="http://schema.org/Person">Person</a> for an item in a list of contact, an author or similar.</li>
+  <li>A <a href="http://schema.org/Place">Place</a> for geolocalized content (for a list of points of interest, or through the <code>contentLocation</code> property of an Article).</li>
 </ul>
 
-<p>The item type should only serve to identify main datasource item types. Your template should rather react based on the presence of specific properties whenever possible for maximum flexibility.</p>
+<p>In your template, the item type should only serve to identify main datasource item types. You should rather react based on the presence of specific properties whenever possible for maximum flexibility.</p>
 
 <p>Main item properties that you will use are:</p>
 <ul>
@@ -90,7 +91,7 @@ recipes.find(
 
 <p>Other properties may depend on the specific type of an item, such as <code>contentURL</code> to get the address of an image or <code>author</code> to get the person behind a creative work.</p>
 
-<p>Please note that these properties may not always be set. In fact, most of the properties defined in schema.org for a specific item type won't be set in the returned feed. That's normal! Datasource providers do not expose all possible information about an item. As much as practical, your template should not rely on the item properties being defined.</p>
+<p>Please note that these properties may not always be set. In fact, most of the properties defined in schema.org for a specific item type won't be set in the returned feed. That's normal! Datasource providers do not expose all possible information about an item. As much as practical, your template should not rely on properties being defined.</p>
 
 <p>The following example would render an hypothetical list of recipes:</p>
 <pre><code class="javascript">var recipes = Joshfire.factory.getDataSource("recipes");
