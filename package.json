@@ -14,5 +14,6 @@
   "user": "joshfire",
   "scripts" : {
     "start": "joshfire/adapters/node/bootstrap.js" 
-  }
+  },
+  "domain":"developer.joshfire.com"
 }
