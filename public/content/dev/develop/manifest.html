@@ -32,7 +32,7 @@
       "email": "",
       "web": ""
     }
-  ]
+  ],
   "<a href="/doc/ref/package#maintainers">maintainers</a>": [
     {
       "name": "",
@@ -85,7 +85,7 @@
     "<a href="/doc/ref/package#options">options</a>": {
       "schema": {
         "abouthtml": {
-          "type": <em>string</em>,
+          "type": "<em>string</em>",
           "title": ""
         }
       },
@@ -159,4 +159,4 @@
 
 <p>In turn, this means you should use template versioning through the <a href="/doc/ref/package#version">version</a> manifest property and provide changelogs in the <a href="/doc/ref/package#description">description</a> of your template to guide factory users through updates.</p>
 
-<p>Conversely, you should not increment the template's version number for "cosmetic" changes, for instance updates of your template's description or screenshots, since they do not affect the functionality of your template in any way. This avoids sending annoying users with useless notifications.</p>
+<p>Conversely, to avoid sending useless notifications to factory users, you should not increment the template's version number for "cosmetic" changes, for instance updates of your template's description or screenshots, since they do not affect the functionality of your template in any way.</p>
