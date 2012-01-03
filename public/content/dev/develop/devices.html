@@ -81,33 +81,5 @@
   }
 ]</code></pre>
 
-<p>The same <a href="/doc/develop/start">template entry point</a> may be used for different families of devices. Nevertheless, please note that the device's family identified when the Web application starts is not exposed to the JavaScript code. In other words, the only way to run family specific code in your template that relies on the device detection mechanism included in the Web application is to use specific template entry points for the families.</p>
-
-<p>For instance, the template entry point for phones may look like:</p>
-<pre><code class="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    <em>[...]</em>
-  &lt;/head&gt;
-  &lt;body&gt;
-    <em>[...]</em>
-    &lt;script type="text/javascript"&gt;
-      var family = "phone";
-      <em>[...]</em>
-    &lt;/script&gt;
-    &lt;script type="text/javascript"&gt;
-      // Common script included in all entry points
-      if (family === "phone") {
-        // Phone specific code here
-      }
-      else if (family === "tv") {
-        // TV specific code here
-      }
-      else {
-        // Other families
-      }
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt; 
-</code></pre>
+<p>The same <a href="/doc/develop/start">template entry point</a> may be used for different families of devices.  The device's family identified when the Web application starts is exposed to the JavaScript code in <a href="/doc/ref/templateapi#device"><code class="json">Joshfire.factory.device</code></a></p>
 
