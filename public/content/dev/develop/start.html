@@ -32,26 +32,26 @@
 
 <h2>Link to bootstrap script</h2>
 
-<p>All files used as template entry points must include a link to the <strong>bootstrap script</strong>. The bootstrap script maps template settings, e.g. the names and number of datasources inputs, to user selected values for these settings, e.g. the actual datasources feeds. See the <a href="/doc/develop/templateapi">Template API reference</a> for information about objects and functionalities exposed.</p>
+<p>All files used as template entry points must include a link to the <strong>bootstrap script</strong>. The bootstrap script maps template settings, e.g. the names and number of datasources inputs, to factory user selected values for these settings, e.g. the actual datasources feeds. See the <a href="/doc/develop/templateapi">Template API reference</a> for information about objects and functionalities exposed.</p>
 
 <pre><code class="html">&lt;script data-joshfire-bootstrap&gt;&lt;/script&gt;</code></pre>
 
-<p>When the generated Web application is started, it detects and replaces this line automatically with the appropriate JavaScript code. No further work is required from a template perspective.</p>
+<p>When the generated Web application is started, the loading script detects and replaces this line automatically with the appropriate bootstrap JavaScript code. No further work is required from a template perspective to set things up.</p>
 
 
 <h2>Bootstrap script during template development</h2>
 
 <p>The main problem you will face during template development is that the factory can only generate the appropriate bootstrap script when:
 <ul>
-  <li>your template is already listed in the list of templates.</li>
-  <li>you create a Web application project that uses your template.</li>
+  <li>it knows about your template;</li>
+  <li>there exists a Web application project that uses your template and binds datasource inputs to actual feeds.</li>
 </ul>
 
 <h3>How to create the bootstrap script for a new template</h3>
 
-<p>However, by definition, the factory does not know anything about your template as long as it has not been <a href="/doc/develop/submit">submitted</a> to the github repository, and this is obviously something that you will only do when your template is ready for production.</p>
+<p>By definition, the factory does not know anything about your template as long as it has not been <a href="/doc/develop/submit">submitted</a> to the github repository, and this is obviously something that you will only do when your template is ready for production.</p>
 
-<p>The factory does not yet feature a development mode that would allow testing an unknown template. What this means is that, for development purpose, you will have to generate the appropriate bootstrap script for your template and link to it from the template's entry point(s).</p>
+<p>The factory does not yet feature a development mode that would allow testing an unknown template. This means that you will have to generate the appropriate bootstrap script for your template and link to it from your template's entry point(s).</p>
 
 <p>The bootstrap script is composed of two parts:</p>
 <ul>
@@ -84,24 +84,20 @@
     "name": "<em>appname</em>",
     "description": "<em>appdescription</em>",
     "icon": {
-      "url": "<em>icon-uri</em>",
-      "mime": "image/jpeg",
-      "size": <em>12345</em>,
-      "id": "<em>1234567890</em>",
-      "meta": {
-        "width": <em>2048</em>,
-        "height": <em>1536</em>
-      }
+      "itemType": "ImageObject",
+      "contentURL": "<em>icon-uri</em>",
+      "contentEncoding": "jpeg",
+      "contentSize": <em>12345</em>,
+      "width": <em>2048</em>,
+      "height": <em>1536</em>
     },
     "logo": {
-      "url": "<em>icon-logo</em>",
-      "mime": "image/jpeg",
-      "size": <em>1234</em>,
-      "id": "<em>1234567891</em>",
-      "meta": {
-        "width": <em>1024</em>,
-        "height": <em>1024</em>
-      }
+      "itemType": "ImageObject",
+      "contentURL": "<em>icon-logo</em>",
+      "contentEncoding": "png",
+      "contentSize": <em>1234</em>,
+      "width": <em>1024</em>,
+      "height": <em>1024</em>
     }
   };
 

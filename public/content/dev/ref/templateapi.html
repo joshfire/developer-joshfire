@@ -109,8 +109,18 @@ news.<strong>find</strong>({}, function (err, data) {
 <pre><code class="json">{
   "name": "The Colbert daily",
   "description": "Read and watch Colbert's latest news",
-  "icon" : <em>image object</em>,
-  "logo": <em>image object</em>,
+  "icon" : {
+    "itemType": "ImageObject",
+    "contentURL": <em>icon url</em>,
+    "width": <em>width</em>,
+    "height": <em>height</em>
+  },
+  "logo": {
+    "itemType": "ImageObject",
+    "contentURL": <em>logo url</em>,
+    "width": <em>width</em>,
+    "height": <em>height</em>
+  },
   "version": "1.0.1"
 }</code></pre>
 
@@ -121,51 +131,18 @@ news.<strong>find</strong>({}, function (err, data) {
   <dt><code>description</code></dt>
   <dd>A string that describes the purpose of the application.</dd>
   <dt><code>icon</code></dt>
-  <dd>An <code>image</code> object used as icon in application stores and application icon.
-  <br/>Image size: <code>1024x1024</code>.
+  <dd>An <a href="http://schema.org/ImageObject">ImageObject</a> used as icon in application stores and as application icon (see <a href="/doc/ref/datasource">Datasource Item Types</a> for more info about the use of schema.org to represent data).
+  <br/>Typical image size: <code>1024x1024</code>.
   <br/>32-bit PNG or JPEG.</dd>
   <dt><code>logo</code></dt>
-  <dd>An <code>image object</code> that describes the logo of the application.
-  <br/>Image width: <code>2048 pixels</code>. Portrait mode.
+  <dd>An <a href="http://schema.org/ImageObject">ImageObject</a> that describes the logo of the application.
+  <br/>Typical image width: <code>2048 pixels</code>. Portrait mode.
   <br/>32-bit PNG on a transparent background.</dd>
   <dt><code>version</code></dt>
   <dd>The version of the application, entered by the user in the factory page.</dd>
 </dl>
 <p>Properties may not be defined when the user did not enter any specific value. Templates must degrade gracefully in the absence of any of these properties.</p>
 
-<h3 id="imageObject">The <code>image</code> object</h3>
-
-<p>An <code>imageObject</code> contains meta-information about an image.</p> 
-<pre><code class="json">{
-  "url" : "http://static.platform.joshfire.com.s3.amazonaws.com/ab/bd7c8178a4fdf43d5a197a8dc92e43/avatar.jpg",
-  "mime: "image/jpeg",
-  "size": 7048,
-  "id: "bd7c8178a4fdf43d5a197a8dc92e43",
-  "meta" : {
-    "width" : 180,
-    "height" : 110
-  }
-}</code></pre>
-
-<p>Object properties are:</p>
-<dl>
-  <dt><code>url</code></dt>
-  <dd>The URL of the image as a string. Relative links are resolved against the template's top-level directory</dd>
-  <dt><code>mime</code></dt>
-  <dd>The MIME type of the image as a string.
-  <br/>One of <code>image/jpeg</code> or <code>image/png</code>.</dd>
-  <dt><code>size</code></dt>
-  <dd>The size of the image file in bytes.</dd>
-  <dt><code>id</code></dt>
-  <dd>ID of the object for the factory. Globally unique across images.</dd>
-  <dt><code>meta</code></dt>
-  <dd>Other meta-information about the images. Possibilities are:
-  <ul>
-    <li><code>"width"</code>: the width in pixels.</li>
-    <li><code>"height"</code>: the height in pixels.</li>
-  </ul>
-  </dd>
-</dl>
 
 <h2 id="template-settings">Template configuration settings</h2>
 
