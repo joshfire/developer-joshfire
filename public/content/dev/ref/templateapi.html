@@ -30,16 +30,19 @@ var news = f.getDataSource("news");</code></pre>
 <p>The <code>datasource</code> object describes a datasource and exposes a <code>find</code> method to retrieve the underlying feed.</p>
 
 <h4 id="datasource-properties">Object properties</h4>
+<p>With the exception of the <code>name</code> property and the <code>find</code> method, the <code>datasource</code> object should be viewed as opaque from your template's perspective. Object properties are listed here for informational purpose. Your template should never rely on their presence.</p>
 <dl>
   <dt><code>name</code></dt>
   <dd>A string entered by the user in the datasource configuration page that describes the datasource and may be used for display purpose.
   <br/>For instance: « Latest News ».</dd>
   <dt><code>db</code></dt>
-  <dd>A string that identifies the datasource provider.
-  <br/>For instance: "youtube", "flickr", "twitter".</dd>
+  <dd>A string that identifies the datasource provider, when there is only one.
+  <br/>For instance: "youtube", "flickr", "twitter".
+  <br/>A single datasource may agglomerate items from different providers, you should rather check the <a href="/doc/ref/datasource#prop-publisher"><code>publisher</code></a> property of each item in the returned feed.</dd>
   <dt><code>col</code></dt>
   <dd>A string that identifies the collection type of data entries.
-  <br/>For instance: "video", "picture".</dd>
+  <br/>For instance: "videos", "photos".
+  <br/>Same remark as above, the collection may not be set for complex datasources. When set, it may provide a hint about returned items type. You should rather check the <a href="/doc/ref/datasource#prop-itemType"><code>itemType</code></a> property of each item in the returned feed.</dd>
   <dt><code>query</code> and <code>config</code></dt>
   <dd>Search parameters. These objects are specific to each service provider and may evolve over time. The <a href="#datasource-find"><code>find</code></a> method uses them to construct the query sent to the service provider to retrieve the items.
   <br/>Youtube videos may be filtered by username for instance.</dd>
@@ -65,7 +68,7 @@ var news = f.getDataSource("news");</code></pre>
 
 <p>The <code>callback</code> argument follows the <a href="http://nodejs.org/">Node.js</a> convention: its first argument is an error object, and it is <code>undefined</code>/<code>null</code> if the method was successful, its second argument is an instance of a <code>data</code> object.</p>
 
-<p>The <code>data</code> object exposes an <code>entries</code> property whose value is an array of <a href="/doc/ref/datasource">datasource items</a>.</p>
+<p>The <code>data</code> object exposes an <code>entries</code> property whose value is an array of <a href="/doc/ref/datasource">datasource items</a>. Depending on the datasource considered, this object may actually also be viewed as a regular datasource item and may expose properties such as <a href="/doc/ref/datasource#prop-name"><code>name</code></a> (title of the feed), <a href="/doc/ref/datasource#prop-image"><code>image</code></a> (thumbnail for the feed) or <a href="/doc/ref/datasource#prop-description"><code>description</code></a>.</p>
 
 <p>Here is a code example that fetches the content of a datasource and extract the info you need in your template:</p>
 <pre><code class="javascript">var news = f.getDataSource("news");
@@ -95,10 +98,7 @@ news.<strong>find</strong>({}, function (err, data) {
 
 <p>The object exposes one property <code>children</code>, an array of <code>datasource</code> objects.</p>
 
-<p>The object also exposes the same <a href="#datasource-find"><code>find</code></a> method as the <code>datasource</code> object. Use that function to retrieve the agglomeration of the different feeds that compose the object.</p>
-
-<p>Thus, from your template's point of view, whether <code>getDataSource</code> returns a <code>datasource</code> object or a <code>multiDatasource</code> object is transparent for search purpose.</p>
-
+<p>The object also exposes a <a href="#datasource-find"><code>find</code></a> method similar to its equivalent for the <code>datasource</code> object. This function calls <code>find</code> on children datasources and returns the array of feeds to the callback function. Each feed item in this array exposes an <code>entries</code> property whose value is an array of <a href="/doc/ref/datasource">datasource items</a>.</p>
 
 <h2 id="application-settings">Application configuration settings</h2>
 
