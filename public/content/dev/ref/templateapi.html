@@ -176,6 +176,6 @@ news.<strong>find</strong>({}, function (err, data) {
 
 <p>Information about selected plugins is exposed in the <code>Joshfire.factory.config.plugins</code> object. This section will be completed over time.</p>
 
-<h2 id="device">Current detected device</h2>
+<h2 id="device">User device family</h2>
 
-<p>information about the current identified device's family is exposed in <code class="json">Joshfire.factory.device</code>.</p>
+<p>Information about the user's device is available in the <code class="json">Joshfire.factory.device</code> object. The object only exposes a <code>type</code> property set to the family the device belongs to, in other words one of <em>phone</em>, <em>tablet</em>, <em>tv</em>, <em>desktop</em>, <em>object</em> (see <a href="/doc/ref/package#family-devices">families of devices</a>). This object may be completed over time with additional information (e.g. browser name, version, OS, etc.).</p>
