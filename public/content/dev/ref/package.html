@@ -55,6 +55,7 @@
       {
         "<a href="#family-devices">devices</a>": "<em>phone</em>",
         "<a href="#family-startfile">startfile</a>": "index.phone.html",
+        "<a href="#family-orientation">orientation</a>": "auto",
         "<a href="#family-images">images</a>": "img/phone/image.png",
         "<a href="#family-screenshots">screenshots</a>": [
           "img/phone/screen1.png",
@@ -340,6 +341,26 @@
 ]</code></pre></dd>
   <dt>Required?</dt>
   <dd>Yes</dd>
+</dl>
+
+<h4 id="family-orientation"><code>orientation</code></h4>
+<dl>
+  <dt>Description</dt>
+  <dd>The display orientation supported by the application on the devices in this family.</dd>
+  <dt>Usage</dt>
+  <dd>Use this property to lock the orientation of the generated application to portrait or landscape on devices of the underlying family.
+  <br/>Support for orientation lock depends on the targeted platform and deployment method. Generally speaking:
+  <ul>
+    <li>the orientation cannot be locked when the application is run in a regular Web browser;</li>
+    <li>the orientation is imposed on devices that do not belong to the <em>phone</em> and <em>tablet</em> families.</li>
+  </ul></dd>
+  <dt>JSON type</dt>
+  <dd>A string. Value is one of "<em>portrait</em>", "<em>landscape</em>", or "<em>auto</em>".
+  <br/>Default value is "<em>auto</em>", meaning that the factory does not attempt to lock the orientation in the resulting application.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"orientation": "landscape"</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No. It is generally a best practice to leave the choice of the orientation to the user. Only set this option when needed (e.g. when the application is a game whose action greatly depends on the dimensions of the viewport).</dd>
 </dl>
 
 <h4 id="family-startfile"><code>startfile</code></h4>
