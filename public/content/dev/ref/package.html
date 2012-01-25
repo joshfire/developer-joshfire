@@ -71,8 +71,8 @@
         }
       },
       "form": {
-        "datasource.tabs",
-        "datasource.feed",
+        "datasources.tabs",
+        "datasources.feed",
         {
           "key": "abouthtml",
           "type": "textarea"
@@ -512,7 +512,7 @@
   <dd>The factory adjusts the template's configuration pane based on information given in this section, and ensures the selected option values get exposed in the generated Web application.</dd>
   <dt>JSON type</dt>
   <dd>An object that follows the <a href="/doc/ref/jsonform">JSON form</a> format.
-  <br/>Note that the factory automatically adds datasource inputs in the schema of the JSON form object with a name starting with <code>datasource.<em>[datasource name]</em></code>. These inputs must be referenced in the <code>form</code> section of the JSON form object.
+  <br/>Note that the factory automatically adds datasource inputs in the schema of the JSON form object with a name starting with <code>datasources.<em>[datasource name]</em></code>. These inputs must be referenced in the <code>form</code> section of the JSON form object.
   <br/>Also note that the factory already generates form submission buttons which should not be defined in the schema.</dd>
   <dt>Example</dt>
   <dd><pre><code class="json">"options": {
@@ -527,7 +527,7 @@
       "key": "address",
       "type": "textarea"
     },
-    "datasource.main"
+    "datasources.main"
   }
 }</code></pre></dd>
   <dt>Required?</dt>
