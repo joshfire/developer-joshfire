@@ -28,7 +28,7 @@ Joshfire.define(['joshfire/app', 'joshfire/class', 'joshfire/utils/router', 'src
       ]
     },
 
-    latestFrameworkVersion: '0.9',
+    latestFrameworkVersion: 'dev',
     dataClass: Data,
     id: 'JoshfireWww',
 
