@@ -15,21 +15,33 @@
 
 <p>A template consists of:</p>
 <ul>
-  <li>A <a href="/doc/develop/package">manifest file</a> named <code>package.json</code> that describes the properties of the template. The factory uses the information contained in the manifest file to adjust the actions proposed through the user interface. The information exposed to the generated Web application also depends on the contents of the manifest file.</li>
-  <li>One or more <a href="/doc/develop/start">index file(s)</a> (<code>index.html</code> by default) that serves as entry point for the Web application.</li>
+  <li>A <a href="/doc/develop/package">manifest file</a> named <code>package.json</code> that describes the properties of the template. The factory uses the information contained in the manifest file to adjust the actions proposed through the user interface. The information exposed to the generated Web application also depends on the contents of the manifest file. The name and location of the manifest file cannot be changed. It must be <code>package.json</code> and the file must appear in the root folder of the template.</li>
+  <li>One or more <a href="/doc/develop/start">index file(s)</a> that serves as entry point for the Web application (<code>index.html</code> in the same folder as the manifest file is assumed unless overridden in manifest file). These entry points must be valid HTML5 files.</li>
   <li>A set of resources (images, videos, JavaScript code, HTML pages, etc.)</li>
   <li>The JavaScript logic of the Web application.</li>
 </ul>
 
-<p>A template is intended to be run on client devices and does not include server-side code.</p>
+<p>A template runs on client devices and cannot include code that would require server-side execution.</p>
 
 <p>Datasources and configuration settings selected by users are exposed to the template through a <a href="/doc/develop/templateapi">JavaScript API</a>.</p>
 
 <h2>A minimal template</h2>
 
-<p>A minimal "Hello world!" template is a two file package with a static starting point <code>index.html</code> and a manifest file that looks like:</p>
-
-<pre><code class="json">{
+<p>A minimal "Hello world!" template consists of two files in the same folder:</p>
+<ul>
+ <li>an <code>index.html</code> file that contains markup such as:
+ <pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Hello World&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p&gt;Hi, there.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre></code></li>
+ <li>a <code>package.json</code> manifest file that contains the following code:
+ <pre><code class="json">{
   "name": "hello-world",
   "fullName": "Hello World!",
   "version": "0.0.1",
@@ -40,6 +52,8 @@
       "big": "http://i.imgur.com/x5NbC.png"
     }
   }
-}</code></pre>
+}</code></pre>  
+ </li>
+</ul>
 
-<p>Such a minimal template does not support any datasource input and does not encapsulate any JavaScript logic on top of what the factory generates. This example is essentially dull, let's see how to create something more useful!</p>
+<p>Such a minimal template does not support any datasource input and does not encapsulate any JavaScript logic. This example is essentially dull, let's see how to create something more useful!</p>
