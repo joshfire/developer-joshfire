@@ -15,7 +15,6 @@
 <p>The outline of a JSON form object is:</p>
 <pre><code class="json">{
   "<a href="#schema">schema</a>": <em>Data schema</em>,
-  "<a href="#value">value</a>": <em>Default values</em>,
   "<a href="#form">form</a>": <em>Form layout</em>
 }</code></pre>
 
@@ -46,6 +45,8 @@
   }
 }</code></pre>
 
+<p>The JSON form library pre-fills a form input with its default value if one is defined. It also sets properties to their default values in the structured object generated upon form submission if the property was not rendered in the form.</p>
+
 <p>In just about all cases in JSON form, the root level of the JSON schema describes an object with properties. For the sake of simplicity and readability, you can drop this level and start directly with the contents of what its <code>properties</code> property would have been. The JSON form library will simply re-create the implicit root level if it cannot find the <code>properties</code> property. Using this shortcut notation, the previous example may be written as:</p>
 <pre><code class="json">"schema": {
   "abouthtml": {
@@ -56,7 +57,7 @@
   "gender": {
     "title": "Gender",
     "description": "Gender of the application.",
-    "type": "string"
+    "type": "string",
     "enum": [
       "male",
       "female",
@@ -64,6 +65,7 @@
     ]
   }
 }</code></pre>
+
 <p>Of course, do not use this shortcut notation if your schema needs to define a root-level property named "properties" otherwise the library would think you're actually using the complete notation!</p>
 
 <p>Through recursion, you can build much more complex structures. The following schema would generate two levels:</p>
@@ -87,12 +89,14 @@
           "male",
           "female",
           "alien"
-        ]
+        ],
+        "default": 42
       },
       "magic": {
         "title": "Author's magic number",
         "type": "number",
-        "minimum": 1
+        "minimum": 1,
+        "default": 42
       }
     }
   }
@@ -113,21 +117,7 @@
 </dl>
 <p>If the <code>type</code> property and the <code>items</code> properties are not defined, <code>string</code> is assumed. If the <code>type</code> property is not defined but the <code>items</code> property is, <code>object</code> is assumed.</p>
 
-<h3 id="value">Default values</h3>
-
-<p>Use the <code>value</code> section to define default values for some of the data in the data model. The object's properties are the names of the properties defined in the <code>schema</code> section. To reference properties that are not at the root level, simply prefix the property name with the names of its ancestors, separating names with dots, e.g. <code>author.gender</code> in the example we've just seen.</p>
-
-<p>The property values must be of the type defined in the schema.</p>
-
-<p>Here are default values for our little example:</p>
-<pre><code class="json">"value": {
-  "abouthtml": "&lt;p&gt;This is a great app!&lt;/p&gt;",
-  "author.gender": "alien",
-  "author.magic": 42
-}</code></pre>
-
-<p>The JSON form library pre-fills a form input with its default value if one is defined. It also sets properties to their default values in the structured object generated upon form submission if the property was not rendered in the form.</p>
-
+<p>As illustrated above, the <code>default</code> property may be used to set default values for some of the variables in the data model. The type of the value must match that of the underlying variable.</p>
 
 <h3 id="form">Form layout</h3>
 
