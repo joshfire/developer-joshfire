@@ -15,7 +15,13 @@
 
 <h2>Manifest outline</h2>
 
-<p>You may use the following ready-to-fill JSON snippet as starting point for your template manifest. Manifest properties link to the relevant section of the manifest reference for convenience. Text in italic needs to be replaced in your template. Of course, you may need to add or drop properties depending on your needs.</p>
+<p>You may use the following ready-to-fill JSON snippet as starting point for your template manifest noting that:</p>
+<ol>
+ <li>manifest properties link to the relevant section of the <a href="/doc/ref/package">reference</a> to help you find your way;</li>
+ <li>text in italic below needs to be replaced by appropriate values in your template;</li>
+ <li>not all properties listed here are mandatory. Although we strongly recommend you to consider these properties, you may want to drop some of them in the manifest file of your template;</li>
+ <li>there exist additional properties that may be useful for your template. Please check the <a href="/doc/ref/package">reference</a> and ask for <a href="/support">support</a> if the property you're looking for does not seem to exist.</li>
+</ol>
 <pre><code class="json">{
   "<a href="/doc/ref/package#name">name</a>": "",
   "<a href="/doc/ref/package#fullName">fullName</a>": "",
@@ -118,32 +124,39 @@
 
 <h3>Ensure your template is visually attractive</h3>
 
-<p>Many users will only rely on text descriptions to search and filter templates. Template images and screenshots will be much more important than text to pick up a template in the end. Images are how you will <em>sell</em> your template, and you should pay close attention to images for your template to gain value in users' eyes.</p>
+<p>Many users will only rely on text descriptions to search and filter templates. Template images and screenshots are much more important than text to pick up a template in the end. You will <em>sell</em> your template through images first, so you should pay close attention to the marketing images that advertize your template to gain value in users' eyes.</p>
 
-<p>The smaller size of the template <a href="/doc/ref/package#images">images</a> is displayed on the templates selection screen. The bigger size is displayed on the template's details page. In both cases, as much as is practical, the image should convey:</p>
+<p>You should reference at least two <a href="/doc/ref/package#images">images</a> in the manifest file:</p>
+<ul>
+ <li>a <em>smaller</em> image (<code>380x236</code>) that gets displayed in the templates listing. That's the most important one since it is the first one that the user will ever see</li>
+ <li>a <em>larger</em> image (<code>700x335</code>) that gets displayed on the template's details page, in other words when the factory user selects your template in the list.</li>
+</ul>
+
+<p>In both cases, as much as is practical, the image should convey:</p>
 <ul>
   <li>the look and feel of the template</li>
   <li>targeted families of devices</li>
   <li>datasource types</li>
 </ul>
+<p>Save their actual size, the images could be identical but we encourage you to use the space available to carry more information in the larger image.</p>
 
 <figure>
   <img src="http://i.imgur.com/XF5iy.png" alt="A crowd of participants is attending an event. The tagline 'Connect with your public' is displayed as overlay, as well as a mobile phone and a tablet to show targeted devices." />
   <figcaption>Example of a generic 'Event' template image</figcaption>
 </figure>
 
-<p><a href="/doc/ref/package#family-screenshots">Screenshots</a> linked from the manifest must be <em>real</em> screenshots taken on a typical device of the underlying family. The factory displays the screenshots in the template's details page.</p>
-
-<figure>
-  <img src="http://i.imgur.com/rphpo.png" alt="" />
-  <figcaption>Example of a template screenshot on a phone</figcaption>
-</figure>
-
-<p><a href="/doc/ref/package#family-images">Per-family images</a> replace the generic template image when the user moves over or select a specific family for the template. The image has the same size as the small template image <code>380x236</code>. It should typically feature a screenshot of the template on a typical device of the selected family completed with visual clues on the template.</p>
+<p>On top of marketing images, <a href="/doc/ref/package#family-images">per-family images</a> replace the generic template image when the user moves over or select a specific family for the template. The image has the same size as the small template image <code>380x236</code>. It should typically feature a screenshot of the template on a typical device of the selected family completed with visual clues on the template.</p>
 
 <figure>
   <img src="/img/tedx-tablet.png" alt="" />
   <figcaption>Example of a template image for tablets</figcaption>
+</figure>
+
+<p>Eventually, include <a href="/doc/ref/package#family-screenshots">screenshots</a> in the manifest. These screenshots must be <em>real</em> screenshots taken on a typical device of the underlying family. The factory displays the screenshots in the template's details page.</p>
+
+<figure>
+  <img src="http://i.imgur.com/rphpo.png" alt="" />
+  <figcaption>Example of a template screenshot on a phone</figcaption>
 </figure>
 
 <p>Remaining sections of the manifest are covered in other documentation pages:</p>
