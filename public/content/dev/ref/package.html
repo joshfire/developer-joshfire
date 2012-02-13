@@ -25,7 +25,7 @@
       "email": "superego@example.net",
       "web": "http://example.net"
     }
-  ]
+  ],
   "<a href="#maintainers">maintainers</a>": [
     {
       "name": "Super Ego",
@@ -66,18 +66,18 @@
     "<a href="#options">options</a>": {
       "schema": {
         "abouthtml": {
-          "type": <em>string</em>,
+          "type": "<em>string</em>",
           "title": "About me"
         }
       },
-      "form": {
+      "form": [
         "datasources.tabs",
         "datasources.feed",
         {
           "key": "abouthtml",
           "type": "textarea"
         }
-      }
+      ]
     }
   }
 }</code></pre>
@@ -299,11 +299,11 @@
   },
   {
     "devices": "tv",
-    "startfile": "app/index.tv.html",
+    "startfile": "app/index.tv.html"
   },
   {
     "devices": "*",
-    "startfile": "app/index.html",
+    "startfile": "app/index.html"
   }
 ]</code></pre></dd>
   <dt>Required?</dt>
@@ -522,13 +522,13 @@
       "title": "Party location"
     }
   },
-  "form": {
+  "form": [
     {
       "key": "address",
       "type": "textarea"
     },
     "datasources.main"
-  }
+  ]
 }</code></pre></dd>
   <dt>Required?</dt>
   <dd>No</dd>
