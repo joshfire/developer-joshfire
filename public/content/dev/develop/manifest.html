@@ -13,7 +13,7 @@
 
 <p>The possible sections and parameters are described in the <a href="/doc/ref/package">manifest reference</a>.</p>
 
-<h2>Manifest outline</h2>
+<h2 id="outline">Manifest outline</h2>
 
 <p>You may use the following ready-to-fill JSON snippet as starting point for your template manifest noting that:</p>
 <ol>
@@ -110,9 +110,9 @@
 }</code></pre>
 
 
-<h2>Manifest guidelines</h2>
+<h2 id="guidelines">Manifest guidelines</h2>
 
-<h3>Describe your template</h3>
+<h3 id="describe">Describe your template</h3>
 <p>Pay attention to the textual information that describes your template. The <a href="/doc/ref/package#fullname">fullName</a> should capture the purpose of the template in a few short and simple words. Keep in mind that users will only see more details about the template when they select it. Examples of possible fullName values:</p>
 <ul>
   <li>« Birthday party » for an event template specialized in birthday parties.</li>
@@ -123,7 +123,7 @@
 
 <p><a href="/doc/ref/package#keywords">keywords</a> provide yet another descriptive set of words for the template. They will be used to filter out templates based on user input.</p>
 
-<h3>Ensure your template is visually attractive</h3>
+<h3 id="visual">Ensure your template is visually attractive</h3>
 
 <p>Many users will only rely on text descriptions to search and filter templates. Template images and screenshots are much more important than text to pick up a template in the end. You will <em>sell</em> your template through images first, so you should pay close attention to the marketing images that advertize your template to gain value in users' eyes.</p>
 
@@ -167,13 +167,13 @@
   <li><a href="/doc/develop/devices">Support multiple devices</a></li>
 </ul>
 
-<h3>Check the preview</h3>
+<h3 id="preview">Check the preview</h3>
 
 <p>The Factory features a preview pane on the right side that lets factory users run their application as if they were using a real device. This preview mode is essential because it provides real-time feedback, letting users tweak datasources and adjust configuration settings and check the result within seconds. Unfortunately, the preview is by essence imperfect as it runs in the user's Web browser, which may not behave as the actual Web browser on the final device.</p>
 
 <p>You should check the preview mode and fix your template if necessary. If fixing is not an option for a family of devices, e.g. because your template requires device specific capabilities or because the design is not flexible enough to fit the frame in the preview, simply set the <a href="/doc/ref/package#family-disablePreview">disablePreview</a> flag for the family in the manifest file.</p>
 
-<h3>Use template versioning</h3>
+<h3 id="versioning">Use template versioning</h3>
 
 <p>A Web application is bound to a specific version of a template identified by the latest commit identifier for the template when the Web application is created.</p>
 
