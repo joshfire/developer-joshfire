@@ -73,6 +73,7 @@
         "<a href="/doc/ref/package#family-devices">devices</a>": "<em>phone</em>",
         "<a href="/doc/ref/package#family-startfile">startfile</a>": "",
         "<a href="/doc/ref/package#family-orientation">orientation</a>": "auto",
+        "<a href="/doc/ref/package#family-disablePreview">disablePreview</a>": false,
         "<a href="/doc/ref/package#family-images">images</a>": "",
         "<a href="/doc/ref/package#family-screenshots">screenshots</a>": [
           "",
@@ -166,14 +167,20 @@
   <li><a href="/doc/develop/devices">Support multiple devices</a></li>
 </ul>
 
+<h3>Check the preview</h3>
+
+<p>The Factory features a preview pane on the right side that lets factory users run their application as if they were using a real device. This preview mode is essential because it provides real-time feedback, letting users tweak datasources and adjust configuration settings and check the result within seconds. Unfortunately, the preview is by essence imperfect as it runs in the user's Web browser, which may not behave as the actual Web browser on the final device.</p>
+
+<p>You should check the preview mode and fix your template if necessary. If fixing is not an option for a family of devices, e.g. because your template requires device specific capabilities or because the design is not flexible enough to fit the frame in the preview, simply set the <a href="/doc/ref/package#family-disablePreview">disablePreview</a> flag for the family in the manifest file.</p>
+
 <h3>Use template versioning</h3>
 
 <p>A Web application is bound to a specific version of a template identified by the latest commit identifier for the template when the Web application is created.</p>
 
-<p>In particular, a Web application does not immediately switch to the latest version of a template when this template is updated. That's on purpose, both to ensure that Web applications do not break in case changes are not backward compatible, and to ensure factory users remain in control of the evolutions of their Web application(s).</p>
+<p>In particular, a Web application does not automatically switch to the latest version of a template when the template is updated. That is on purpose, both to ensure that Web applications do not break in case changes are not backward compatible, and to ensure factory users remain in control of the evolutions of their Web application(s).</p>
 
-<p>That said, the factory will notify users of a template whenever the version defined in the manifest file gets incremented, and propose that they update to the latest version.</p>
+<p>That said, the factory notifies users whenever the version defined in the manifest file of a template they use is incremented. The notification lets them switch to the latest version.</p>
 
-<p>In turn, this means you should use template versioning through the <a href="/doc/ref/package#version">version</a> manifest property and provide changelogs in the <a href="/doc/ref/package#description">description</a> of your template to guide factory users through updates.</p>
+<p>From a template development perspective, this means that you should use template versioning through the <a href="/doc/ref/package#version">version</a> manifest property and provide changelogs in the <a href="/doc/ref/package#description">description</a> of your template to guide factory users through updates.</p>
 
 <p>Conversely, to avoid sending useless notifications to factory users, you should not increment the template's version number for "cosmetic" changes, for instance updates of your template's description or screenshots, since they do not affect the functionality of your template in any way.</p>

@@ -56,6 +56,7 @@
         "<a href="#family-devices">devices</a>": "<em>phone</em>",
         "<a href="#family-startfile">startfile</a>": "index.phone.html",
         "<a href="#family-orientation">orientation</a>": "auto",
+        "<a href="#family-disablePreview">disablePreview</a>": true,
         "<a href="#family-images">images</a>": "img/phone/image.png",
         "<a href="#family-screenshots">screenshots</a>": [
           "img/phone/screen1.png",
@@ -362,6 +363,23 @@
   <dt>Required?</dt>
   <dd>No. It is generally a best practice to leave the choice of the orientation to the user. Only set this option when needed (e.g. when the application is a game whose action greatly depends on the dimensions of the viewport).</dd>
 </dl>
+
+<h4 id="family-disablePreview"><code>disablePreview</code></h4>
+<dl>
+  <dt>Description</dt>
+  <dd>Disable preview pane for the underlying family of devices on the factory.</dd>
+  <dt>Usage</dt>
+  <dd>If your template uses device specific capabilities, browser sniffing or a <code>width</code> value different from <code>device-width</code> in a <code>&lt;meta name="viewport"&gt;</code> declaration, you may run into problems with the preview pane that does not support such features. In turn, users might consider that your template is broken even if it works perfectly fine on devices.
+  <br/>Set this flag to replace the preview pane by an invitation to preview the app on a real device.
+  </dd>
+  <dt>JSON type</dt>
+  <dd>A boolean. False by default.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"disablePreview": true</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No.</dd>
+</dl>
+
 
 <h4 id="family-startfile"><code>startfile</code></h4>
 <dl>
