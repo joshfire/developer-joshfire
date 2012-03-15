@@ -29,31 +29,9 @@
 
 <h3 id="schema">Data schema</h3>
 
-<p>The <code>schema</code> property describes the structured data model that the HTML form is to build. It is a JSON object that follows the <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a> specification. Using JSON Schema allows to define both the expected data structure and constraints about data values.</p>
+<p>The <code>schema</code> property describes the structured data model that the HTML form is to build. It is a JSON object that follows the <code><a href="http://tools.ietf.org/html/draft-zyp-json-schema-03#section-5.2">properties</a></code> definition of the <a href="http://tools.ietf.org/html/draft-zyp-json-schema-03">JSON Schema</a> specification. Using JSON Schema allows to define both the expected data structure and constraints about data values.</p>
 
 <p>Below is an example of simple schema with two pieces of data, one that asks for a bit of HTML and another one that asks for a gender. The gender is an enumeration with a restricted set of values:</p>
-<pre><code class="json">"schema": {
-  "type": "object",
-  "properties": {
-    "abouthtml": {
-      "title": "About the application",
-      "description": "HTML content that describes the application.",
-      "type": "string"
-    },
-    "gender": {
-      "title": "Gender",
-      "description": "Gender of the application.",
-      "type": "string",
-      "enum": [
-        "male",
-        "female",
-        "alien"
-      ]
-    }
-  }
-}</code></pre>
-
-<p>In just about all cases in JSON Form, the root level of the JSON schema describes an object with properties. For the sake of simplicity and readability, you can drop this level and start directly with the contents of what its <code>properties</code> property would have been. The JSON Form library will simply re-create the implicit root level if it cannot find the <code>properties</code> property. Using this shortcut notation, the previous example may be written as:</p>
 <pre><code class="json">"schema": {
   "abouthtml": {
     "title": "About the application",
@@ -71,8 +49,6 @@
     ]
   }
 }</code></pre>
-
-<p>Obviously, you cannot use this shortcut notation if your schema needs to define a root-level property named "properties". Use the full notation in such cases.</p>
 
 <p>Through recursion, you can build much more complex structures. For instance, suppose you want the form to generate the following object:</p>
 <pre><code class="json">{
