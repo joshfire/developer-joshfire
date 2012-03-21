@@ -1,0 +1,180 @@
+<h1>Develop a custom datasource</h1>
+
+<p>The <a href="/doc/gettingstarted/introds">introduction to datasources</a> presents a valid (though minimal) example of a datasource. This series of pages goes into more details.</p>
+
+<h2 id="guidelines">Prepare for datasource development</h2>
+
+<p>A few simple steps are needed to get ready to develop a custom datasource, namely:</p>
+<ol>
+  <li><a href="#add">Add a custom datasource to your app</a></li>
+  <li><a href="#amd">Wrap your code in a module and list dependencies</a></li>
+  <li><a href="#desc">Describe your datasource configuration</a></li>
+  <li><a href="#write">Write code</a></li>
+</ol>
+
+<h3 id="add">Add a custom datasource to your app</h3>
+
+<p>The Factory includes a "custom datasource" mode where you may copy and paste the code of your datasource and use it as a regular datasource that runs client-side and gets deployed with your application. This mode is particularly useful during development to debug the code of your datasource.</p>
+
+<p>Custom datasources are an advanced feature, hidden by default. To access the custom datasource view, @@@.</p>
+
+
+<h3 id="amd">Wrap your code in a module and list dependencies</h3>
+
+<p>Datasources must use the <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Asynchronous Module Definition (AMD) API</a> mechanism. The code must register as an anonymous module. This mechanism makes it easy to add namespaced dependencies and to scope variables so that datasources cannot conflict with the code of the template that embeds them.</p>
+
+<p>This means that your datasource code needs to be wrapped into:</p>
+<pre><code class="javascript">define([], function () {
+  // The code of your datasource goes here
+});</code></pre>
+
+<p>In practice, your datasource code is likely to depend on one of the libraries available from <a href="/doc/datasources/datajslib"><code>datajslib</code></a> and the wrapper code needs to be explicit about the list of dependencies, for instance:</p>
+<pre><code class="javascript">define(['datajslib!http', 'datajslib!iso8601'], function (http, iso8601) {
+  // The code of your datasource goes there.
+  // The code may access properties and call methods of the 'http' and 'iso8601' libraries
+});</code></pre>
+
+
+<h3 id="desc">Describe your datasource configuration</h3>
+
+<p>The datasource must return an object with a <code>desc</code> property that describes configuration parameters for the datasource. This property must return a <a href="/doc/ref/jsonform">JSON Form object</a> (same format as for <a href="/doc/develop/options">template configuration options</a>), extended with a few datasource-specific properties listed below. For example, a datasource that takes as input a URI and returns geolocated content would be defined as:</p>
+
+<pre><code class="javascript">define([], function () {
+  return {
+    desc: {
+      "options": {
+        "schema": {
+          "uri": {
+            "title": "Web address",
+            "type": "string",
+            "format": "uri",
+            "required": true,
+            "default": "http://example.org/myapiaddress"
+          }
+        }
+      },
+      "runAtClient": "enable",
+      "outputType": "Place"
+    },
+
+    // Datasource entry point, returns the list of items
+    "find": function (query, callback) {
+      // Options are returned in query.filter
+      var uri = query.filter.uri;
+      // Fetch the URI and process the response here
+    }
+  };
+});</code></pre>
+
+<p>The JSON Form object must define the data schema for the request options of the datasource and may define the layout of the configuration form that the factory should generate. A default form based on the data schema is rendered if no form is specified (as in the example above).</p>
+
+<p><strong>Important:</strong> The Factory does not (yet!) provide a way to enter configuration parameters for custom datasources through the user interface. Use the <code>default</code> property to specify configuration values for your custom datasources, as illustrated in the above example.</p>
+
+<p>The <code>runAtClient</code> property is one of the four datasource-specific properties that you may set, along with <code>corsRequest</code>, <code>maxage</code> and <code>outputType</code>.</p>
+
+<h4 id="runAtClient"><code>runAtClient</code></h4>
+<dl>
+  <dt>Description</dt>
+  <dd>The datasource can run client-side or needs to be executed on Joshfire's data proxy</dd>
+  <dt>Usage</dt>
+  <dd>Set this property to allow generated applications to embed your datasource code and run client-side. Running client-side is generally a good idea when possible e.g. to reduce latency as requests flow directly to the targeted content provider.</dd>
+  <dt>JSON type</dt>
+  <dd>A string. Value is one of "disable", "enable" or "force".
+  <br/>Default value is "disable", meaning that the datasource cannot be embedded within applications.
+  <br/>The recommended value for custom datasources is "enable" which allows to run the code both server-side and client-side.
+  <br/>Use "force" for datasources that cannot run server-side, either because they require a browser environment or because of service usage limits that would be quickly exceeded if the code was to run server-side.</dd>
+  <dt>Example</dt>
+  <dd><code>"runAtClient": "enable"</code></dd>
+  <dt>Required?</dt>
+  <dd>No but strongly recommended, especially for custom datasources that cannot run server-side for the time being.</dd>
+</dl>
+
+<h4 id="corsRequest"><code>corsRequest</code></h4>
+<dl>
+  <dt>Description</dt>
+  <dd>The datasource may need to issue cross-origin requests</dd>
+  <dt>Usage</dt>
+  <dd>This flag tells the Factory that the datasource, when run client-side, may not work properly under the same-origin policy unless it is relaxed somehow (see section on <a href="#cors">cross-origin issues</a> below).
+    <br/>This flag is only useful when <code>runAtClient</code> is set to <code>enable</code> or <code>force</code>.</dd>
+  <dt>JSON type</dt>
+  <dd>Boolean, <code>false</code> by default.</dd>
+  <dt>Example</dt>
+  <dd><code>"corsRequest": true</code></dd>
+  <dt>Required?</dt>
+  <dd>No but you must set this flag if your datasource may not work under same-origin policy constraints.</dd>
+</dl>
+
+<h4 id="maxage"><code>maxage</code></h4>
+<dl>
+  <dt>Description</dt>
+  <dd>The maximum amount of time that a datasource response may be considered fresh</dd>
+  <dt>Usage</dt>
+  <dd>Set a maximum age when the content returned by datasource is likely to remain stable over some period of time (from several seconds to days) to force the use of caching for the response. Using caching greatly reduces the impact on servers.
+  <br/><em>NB:</em> the Factory does not yet support client-side caching</dd>
+  <dt>JSON type</dt>
+  <dd>A number. Represents an amount of time in seconds.</dd>
+  <dt>Example</dt>
+  <dd><code>"maxage": 300</code> for a time-to-live of 5 minutes.</dd>
+  <dt>Required?</dt>
+  <dd>No</dd>
+</dl>
+
+<h4 id="outputType"><code>outputType</code></h4>
+<dl>
+  <dt>Description</dt>
+  <dd>The type of items returned by the datasource, as defined in the <a href="http://schema.org/">schema.org</a> type hierarchy.</dd>
+  <dt>Usage</dt>
+  <dd>This property tells the Factory the type of items that your datasource returns so that it can associate the datasource with the right datasource inputs of a given template.</dd>
+  <dt>JSON type</dt>
+  <dd>A string. Must match the name of a type in the <a href="http://schema.org/docs/full.html">schema.org type hierarchy</a> or one of the <a href="/doc/ref/datasource#extensions">extensions defined in this doc</a>.</dd>
+  <dt>Example</dt>
+  <dd>"outputType": "BlogPosting"</dd>
+  <dt>Required?</dt>
+  <dd>Yes.</dd>
+</dl>
+
+<h3 id="write">Write code</h3>
+
+<p>That's it for the preparation. You are now ready to write the code of your datasource. Before you jump into coding, there are a couple of guidelines that we would like to insist on:</p>
+<dl>
+  <dt><strong>Do not assume server-side modules</strong></dt>
+  <dd>Your code will run client-side whenever possible. You cannot assume that server-side modules such as those defined in <a href="http://nodejs.org/">node.js</a> are available.</dd>
+
+  <dt><strong>Do not assume a browser environment</strong></dt>
+  <dd>Your code may also run server-side. You cannot assume that the code runs in a browser environment with a global <code>window</code> object and common DOM manipulation techniques either.
+  <br/>Coupled with the previous guideline, this basically means your code should run a <em>bare</em> JavaScript environment.</dd>
+
+  <dt><strong>Do not leak variables to the global scope</strong></dt>
+  <dd>Your code may be embedded in all sorts of templates that are unaware of its presence and structure. You must not leak variables to the global scope not to conflict with the rest of the code.</dd>
+
+  <dt><strong>Drop superfluous code, reuse existing components</strong></dt>
+  <dd>The code of your datasource may be embedded in applications generated by the factory and shipped to e.g. mobile devices. Size matters: you should drop all superfluous code and reuse <a href="/doc/datasources/datajslib">libraries</a> and <a href="doc/datasources/operators">operators</a> that are shared among datasources whenever possible.
+  <br/>Note that the factory takes care of minifying the code for deployment, so no need to worry about that.</li>
+
+  <dt><strong>Normalize data carefully</strong></dt>
+  <dd>Data normalization is not an easy task. The goal is to produce data that can be consumed by a maximum number of templates even if they have not been initially developed for the particular type of data that a datasource returns.
+  <br/>Check the <a href="/doc/ref/datasource">Datasource item type reference</a> for more information about the recommended item types and properties
+  <br/>The Linked Data community behind <a href="http://schema.rdfs.org/">schema.rdfs.org</a> maintain a <a href="https://github.com/mhausenblas/schema-org-rdf/tree/master/examples">list of examples</a> for schema.org item types. Check the JSON-LD examples in particular. For instance the following <a href="https://github.com/mhausenblas/schema-org-rdf/blob/master/examples/Thing/CreativeWork/Book/Book.jsonld">Book</a> example (you may leave the properties that are specific to the JSON-LD syntax aside for the time being, such as <code>@context</code>).</dd>
+</ul>
+
+
+<h2 id="cors">Deal with cross-origin issues</h2>
+
+<p>Your Web browser applies a same-origin policy that makes it impossible to send generic AJAX requests to domains other than the domain of the Web application. That policy is for very good security reasons. That said, a datasource is typically all about retrieving content from a third-party service provider. In other words, in most cases, a datasource needs to issue cross-origin requests.</p>
+
+<p>There are a couple of mechanisms available to work around the same-origin policy while preserving security. If these mechanisms cannot be used, it means your datasource cannot run client-side. For testing purpose and debugging purpose, you may still be able to run the datasource locally, temporarily disabling security for that purpose.</p>
+
+<h3>JSONP</h3>
+
+<p><a href="http://www.json-p.org/">JSONP</a> is a data-interchange format that takes advantage of the fact that the same-origin policy does not apply to scripts and enables cross-origin JSON data interchange.</p>
+
+<p>Many content providers APIs include JSON/JSONP serializations of the content that can be accessed through their API. When JSONP is available, it is the easiest way to work around the same-origin policy. It is also the easiest way to process the content returned by the service provider since JSON is natively supported by all modern Web browsers.</p>
+
+
+<h3><code>Access-Control-Allow-Origin</code> response header</h3>
+
+<p>You may still enable cross-origin requests if content cannot be returned as JSONP, provided that you control the server that returns the content. If you do, you may want to enable <a href="http://www.w3.org/TR/cors/">Cross-Origin Resource Sharing</a>, typically adding a <code>Access-Control-Allow-Origin: *</code> HTTP header to the responses returned by your API. Check security implications before doing so. Also note that not all Web browsers support this feature yet.</p>
+
+<h3>Disable Web security</h3>
+
+<p>Disabling Web security is of course at best a temporary measure! With Google Chrome, you can disable Web security at launch time, running chrome from the command-line with a <code>--disable-web-security</code> argument (all Chrome windows must be closed when this command is issued).</p>

@@ -1,0 +1,428 @@
+<h1>Datasources boilerplates</h1>
+
+<p>This page presents a few datasources boilerplates that you might want to use as starting point for your datasource. Boilerplates are sorted by ascending complexity:</p>
+<ol>
+  <li><a href="#minimal">A minimal boilerplate</a></li>
+  <li><a href="#fetch">Fetch and process boilerplate</a></li>
+  <li><a href="#http">Retrieve and process a JSON feed from an HTTP URI</a></li>
+  <li><a href="#async">Asynchronous item processing</a></li>
+</ol>
+
+<h2 id="minimal">A minimal boilerplate</h2>
+
+<p>A minimal boilerplate to get you started with datasource development is:</p>
+<pre><code class="javascript">define([], function () {
+  return {
+    desc: {
+      "options": {
+        "schema": {}                  // <strong>TODO: your configuration settings</strong>
+      },
+      "runAtClient": "enable",
+      "outputType": "Thing"           // <strong>TODO: adjust to the type of items you produce</strong>
+    },
+
+    find: function (query, callback) {
+      <strong>YOUR_API_CALL</strong>(query, function (err, data) {
+        if (err) return callback(err);
+        var items = data.results;     // <strong>TODO: adjust to match your API structure</strong>
+        var convertedItems = [];
+        for (var i=0; i&lt;data.results.length; i++) {
+          convertedItems.push(<strong>PROCESS_ITEM</strong>(items[i]));
+        }
+        return callback(null, {
+          entries: convertedItems
+        });
+      });
+    }
+  };
+});</code></pre>
+
+<p>For this boilerplate to run correctly, you need to fill the gaps, replacing <code>YOUR_API_CALL</code> and <code>PROCESS_ITEM</code> by calls to appropriate methods and reacting to <code>TODOs</code> as necessary.</p>
+
+
+<h2 id="fetch">Fetch and process boilerplate</h2>
+
+<p>Many datasources can be executed in two consecutive steps:</p>
+<ol>
+  <li>HTTP request preparation and sending;</li>
+  <li>Feed conversion.</li>
+</ol>
+
+<p>It is good practice to split your code according to these two steps, exposing a <code>fetch</code> method and a <code>process</code> method on top of a generic <code>find</code> method. This split also proves useful for testing purpose. Here is the suggested boilerplate.</p>
+
+<pre><code class="javascript">define([], function () {
+  return {
+    /**
+     * Description of the datasource
+     * <strong>TODO: adjust the configuration to suit your needs</strong>
+     */
+    desc: {
+      "options": {
+        "schema": {}                  // <strong>TODO: your configuration settings</strong>
+      },
+      "runAtClient": "enable",
+      "outputType": "Thing"           // <strong>TODO: adjust to the type of items you produce</strong>
+    },
+
+    /**
+     * Fetches feed items from the source provider.
+     *
+     * @function
+     * @param {Object} query Query parameters. Feed specific object.
+     * @param {function(Object, Object)} callback Callback function.
+     *   The data type depends on the datasource.
+     */
+    fetch: function (query, callback) {
+      <strong>YOUR_API_CALL</strong>(query, callback);
+    },
+
+    /**
+     * Normalizes the data received from the source provider.
+     *
+     * @function
+     * @param {Object} data The data that was received
+     *(typically the object given to the callback method at the end of a "fetch")
+     * @param {Object} query Query parameters (which could include filtering options)
+     * @param {function(Object, Object)} callback Callback function.
+     *   The second argument of the callback is an object with an "entries" property
+     *   that contains the list of items normalized according to the schema.org hierarchy.
+     */
+    process: function (data, query, callback) {
+      // The converted data to return
+      var converted = {
+        entries: {}
+      };
+      var self = this;
+
+      // Return an empty set if no data was received
+      if (!data) return callback(null, converted);
+
+      // Extract items to process
+      // <strong>TODO: adjust to match your API structure</strong>
+      var items = data.results;
+      if (!items) return callback(null, converted);
+
+      // Convert items received
+      var convertedItems = [];
+      for (var i=0; i&lt;data.results.length; i++) {
+        convertedItems.push(<strong>PROCESS_ITEM</strong>(items[i]));
+      }
+      converted.entries = convertedItems;
+      return callback(null, converted);
+    },
+
+    /**
+     * Returns the normalized data that matches the given query options
+     * from the underlying content provider.
+     *
+     * The code of this function is generic and should not need to be updated.
+     *
+     * @function
+     * @param {Object} query Query parameters. Datasource specific object.
+     * @param {function(Object, Object)} callback Callback function.
+     *   receives the error or the normalized feed.
+     */
+    find: function (query, callback) {
+      var self = this;
+      self.fetch(query, function (err, data) {
+        if (err) {
+          return callback(err, null);
+        }
+        else {
+          self.process(data, query, function (err, converted) {
+            return callback(err, converted);
+          });
+        }
+      });
+    }
+  };
+});</code></pre>
+
+
+<h2 id="http">Retrieve and process a JSON feed from an HTTP URI</h2>
+
+<p>Fetching items from a service provider typically involves sending an HTTP request. The <code>http</code> library should be used for that purpose. The following boilerplate requests a URI that returns a JSON object and processes the resulting items.</p>
+
+<pre><code class="javascript">define([
+  'datajslib!http',
+  'datajslib!async'
+], function (http, async) {
+  return {
+    /**
+     * Description of the datasource
+     * <strong>TODO: adjust the configuration to suit your needs</strong>
+     */
+    desc: {
+      "options": {
+        "schema": {
+          "uri": {
+            "title": "Web address of the JSON feed to retrieve",
+            "type": "string",
+            "format": "uri",
+            "required": true
+          }
+        }
+      },
+      "runAtClient": "enable",
+      "outputType": "Thing"           // <strong>TODO: adjust to the type of items you produce</strong>
+    },
+
+    /**
+     * Fetches feed items from the source provider.
+     *
+     * The function prepares the HTTP request to send to the content provider.
+     * It calls the callback method with the response received.
+     *
+     * @function
+     * @param {Object} query Query parameters. Feed specific object.
+     * @param {function(Object, Object)} callback Callback function.
+     *   The data type depends on the datasource.
+     */
+    fetch: function (query, callback) {
+      // The object generated from the datasource description schema is
+      // available in query.filter. It may not be set depending on whether
+      // the schema defines required fields or not.
+      var filter = query.filter || {};
+
+      // Build the URL to send from the query options
+      // <strong>TODO: build the URL from datasource parameters if needed, remember</strong>
+      // <strong>to call 'encodeURIComponent' for query parameters you add to the URI.</strong>
+      var uri = query.filter.uri;
+      if (!uri) {
+        return callback();
+      }
+
+      // Ensure URI starts with http:// or https://
+      if (uri.search(/^http(s?)\:\/\//i) === -1) {
+        uri = "http://" + uri;
+      }
+
+      // Send the HTTP request, expecting JSON as a response
+      http.request({
+        'url': uri,
+        'dataType': 'jsonp'
+      }, function (err, data) {
+        // 'data' is the object created from the JSON response received,
+        // unless an error occurred.
+        return callback(err, data);
+      });
+    },
+
+    /**
+     * Normalizes the data received from the source provider.
+     *
+     * @function
+     * @param {Object} data The data that was received
+     *(typically the object given to the callback method at the end of a "fetch")
+     * @param {Object} query Query parameters (which could include filtering options)
+     * @param {function(Object, Object)} callback Callback function.
+     *   The second argument of the callback is an object with an "entries" property
+     *   that contains the list of items normalized according to the schema.org hierarchy.
+     */
+    process: function (data, query, callback) {
+      // The converted data to return
+      var converted = {
+        entries: {}
+      };
+      var self = this;
+
+      // Return an empty set if no data was received
+      if (!data) return callback(null, converted);
+
+      // Extract items to process
+      // <strong>TODO: adjust to match your API structure</strong>
+      var items = data.results;
+      if (!items) return callback(null, converted);
+
+      // Convert items received
+      var convertedItems = [];
+      for (var i=0; i&lt;data.results.length; i++) {
+        convertedItems.push(<strong>PROCESS_ITEM</strong>(items[i]));
+      }
+      converted.entries = convertedItems;
+      return callback(null, converted);
+    },
+
+    /**
+     * Returns the normalized data that matches the given query options
+     * from the underlying content provider.
+     *
+     * The code of this function is generic and should not need to be updated.
+     *
+     * @function
+     * @param {Object} query Query parameters. Datasource specific object.
+     * @param {function(Object, Object)} callback Callback function.
+     *   receives the error or the normalized feed.
+     */
+    find: function (query, callback) {
+      var self = this;
+      self.fetch(query, function (err, data) {
+        if (err) {
+          return callback(err, null);
+        }
+        else {
+          self.process(data, query, function (err, converted) {
+            return callback(err, converted);
+          });
+        }
+      });
+    }
+  };
+});</code></pre>
+
+
+<h2 id="async">Asynchronous item processing</h2>
+
+<p>In some cases, you may need to run additional HTTP requests to convert a particular item. The conversion may run asynchronously. The <code>async</code> library provides a very useful <code>map</code> function that handles all the complexity for you.</p>
+
+<p>The final boilerplate that works equally well for synchronous and asynchronous item conversion follows.</p>
+
+<pre><code class="javascript">define([
+  'datajslib!http',
+  'datajslib!async'
+], function (http, async) {
+  return {
+    /**
+     * Description of the datasource
+     * <strong>TODO: adjust the configuration to suit your needs</strong>
+     */
+    desc: {
+      "options": {
+        "schema": {
+          "uri": {
+            "title": "Web address of the JSON feed to retrieve",
+            "type": "string",
+            "format": "uri",
+            "required": true
+          }
+        }
+      },
+      "runAtClient": "enable",
+      "outputType": "Thing"           // <strong>TODO: adjust to the type of items you produce</strong>
+    },
+
+    /**
+     * Fetches feed items from the source provider.
+     *
+     * The function prepares the HTTP request to send to the content provider.
+     * It calls the callback method with the response received.
+     *
+     * @function
+     * @param {Object} query Query parameters. Feed specific object.
+     * @param {function(Object, Object)} callback Callback function.
+     *   The data type depends on the datasource.
+     */
+    fetch: function (query, callback) {
+      // The object generated from the datasource description schema is
+      // available in query.filter. It may not be set depending on whether
+      // the schema defines required fields or not.
+      var filter = query.filter || {};
+
+      // Build the URL to send from the query options
+      // <strong>TODO: build the URL from datasource parameters if needed, remember</strong>
+      // <strong>to call 'encodeURIComponent' for query parameters you add to the URI.</strong>
+      var uri = query.filter.uri;
+      if (!uri) {
+        return callback();
+      }
+
+      // Ensure URI starts with http:// or https://
+      if (uri.search(/^http(s?)\:\/\//i) === -1) {
+        uri = "http://" + uri;
+      }
+
+      // Send the HTTP request, expecting JSON as a response
+      http.request({
+        'url': uri,
+        'dataType': 'jsonp'
+      }, function (err, data) {
+        // 'data' is the object created from the JSON response received,
+        // unless an error occurred.
+        return callback(err, data);
+      });
+    },
+
+    /**
+     * Normalizes the data received from the source provider.
+     *
+     * The function processes items asynchronously.
+     *
+     * @function
+     * @param {Object} data The data that was received
+     *(typically the object given to the callback method at the end of a "fetch")
+     * @param {Object} query Query parameters (which could include filtering options)
+     * @param {function(Object, Object)} callback Callback function.
+     *   The second argument of the callback is an object with an "entries" property
+     *   that contains the list of items normalized according to the schema.org hierarchy.
+     */
+    process: function (data, query, callback) {
+      // The converted data to return
+      var converted = {
+        entries: {}
+      };
+      var self = this;
+
+      // Return an empty set if no data was received
+      if (!data) return callback(null, converted);
+
+      // Extract items to process
+      // <strong>TODO: adjust to match your API structure</strong>
+      var items = data.results;
+      if (!items) return callback(null, converted);
+
+      // Process items asynchronously
+      // (the code can also be used as-is for synchronous processing)
+      async.map(items, function (item, cb) {
+        self.processItem(item, data, query, cb);
+      }, function (err, convertedItems) {
+        // Call the callback with the converted feed
+        // Note the order in the array is preserved, although items processing
+        // may not complete in order.
+        converted.entries = convertedItems;
+        return callback(err, converted);
+      });
+    },
+
+    /**
+     * Normalizes a feed item according to the schema.org hierarchy
+     *
+     * @function
+     * @param {Object} item The item to normalize
+     * @param {Object} data The feed received which may define additional
+     *   properties needed for conversion purpose
+     * @param {Object} query Query parameters. Datasource specific object.
+     * @param {function(Object, Object)} callback Callback function called
+     *   once the processing has completed with an error (or null) and the
+     *   converted item.
+     */
+    processItem: function (item, data, query, callback) {
+      // <strong>TODO: this is where the actual conversion should take place</strong>
+      return callback(null, item);
+    },
+
+    /**
+     * Returns the normalized data that matches the given query options
+     * from the underlying content provider.
+     *
+     * The code of this function is generic and should not need to be updated.
+     *
+     * @function
+     * @param {Object} query Query parameters. Datasource specific object.
+     * @param {function(Object, Object)} callback Callback function.
+     *   receives the error or the normalized feed.
+     */
+    find: function (query, callback) {
+      var self = this;
+      self.fetch(query, function (err, data) {
+        if (err) {
+          return callback(err, null);
+        }
+        else {
+          self.process(data, query, function (err, converted) {
+            return callback(err, converted);
+          });
+        }
+      });
+    }
+  };
+});</code></pre>

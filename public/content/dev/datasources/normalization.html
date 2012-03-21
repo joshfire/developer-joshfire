@@ -1,0 +1,66 @@
+<h1>Data normalization</h1>
+
+<p>The whole purpose of a datasource is to expose content to templates following a structure that templates may easily consume. Factory templates have no idea about the origin of a particular item they receive. All they see is an object with properties. That is on purpose. Basically, if the object exposes the properties that the template understand, the item can be used. If not, the template is likely going to ignore the item.</p>
+
+<h2 id="schema">Using schema.org</h2>
+
+<p>Finding the right level of abstraction and the right set of properties to describe things is not an easy task. The goal of the Factory is also to integrate easily with data on the Web. Many vocabularies are used on the Web to represent specific verticals of data. The Factory uses the <a href="http://schema.org/docs/full.html">schema.org type hierarchy</a> for core objects returned by datasources.</p>
+
+<p>Here is an example of an image returned by the Flickr datasource:</p>
+<pre><code class="json">{
+  "@type": "ImageObject",
+  "url": "http://www.flickr.com/photos/59916538@N00/6599755345",
+  "name": "A VW bus in front of lake",
+  "description": "Ah, what a pleasure to drive an old Volkswagen bus!",
+  "contentURL": "http://farm8.staticflickr.com/7152/6599755345_98cd3a90e9_b.jpg",
+  "width": 1024,
+  "height": 768,
+  "image": {
+    "@type": "ImageObject",
+    "contentURL": "http://farm8.staticflickr.com/7152/6599755345_98cd3a90e9_m.jpg",
+    "width": 240,
+    "height": 180
+  },
+  "author": {
+    "@type": "Person",
+    "name": "tidoust",
+    "image": {
+      "@type": "ImageObject",
+      "contentURL": "http://farm8.static.flickr.com/7004/buddyicons/59916538@N00.jpg",
+      "width": 48,
+      "height": 48
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "url": "http://www.flickr.com",
+    "name": "flickr"
+  },
+  "contentLocation": {
+    "@type": "Place",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 47.582083,
+      "longitude": -120.257034
+    }
+  },
+  "keywords": "cow vwbus",
+  "dateCreated": "2011-12-30T03:40:58Z",
+  "datePublished": "2011-12-30T11:40:58Z",
+  "dateModified": "2012-01-15T09:40:05Z"
+}</code></pre>
+
+
+<h2 id="types">Item types and properties</h2>
+
+<p>Check the <a href="/doc/ref/datasource">Datasource item type reference</a> for more information about the item types and properties returned by existing datasources.</p>
+
+<p>It is good practice to set basic properties of the <a href="http://schema.org/Thing">Thing</a> type whenever possible:</p>
+<ul>
+  <li>The <code>name</code> property should contain the content's title</li>
+  <li>The <code>image</code> property should contain an image to use as thumbnail for the content</li>
+  <li>The <code>description</code> property should be a short raw string that summarizes what the content is about</li>
+  <li>The <code>url</code> property should contain a GUID for the content</li>
+</ul>
+
+<p><a href="https://github.com/mhausenblas/schema-org-rdf/tree/master/examples">Examples of items that follow the schema.org structure</a> are available. Check the JSON-LD examples in particular. For instance the following <a href="https://github.com/mhausenblas/schema-org-rdf/blob/master/examples/Thing/CreativeWork/Book/Book.jsonld">Book</a> example. You may leave the properties that are specific to the JSON-LD syntax (such as <code>@context</code>) aside for the time being).</p>

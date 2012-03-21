@@ -1,0 +1,63 @@
+<h1>Getting started with datasources</h1>
+
+<h2>What is a datasource?</h2>
+
+<p><strong>Datasources</strong> bring normalized content to the factory. A datasource returns a feed of items from the cloud. Items may describe just about anything, from blog posts to persons, locations or videos.</p>
+
+<p>Content normalization ensures that templates can integrate data from different content providers: a picture from <em>content provider A</em> (e.g. Flickr) shares the same structure as another one from <em>content provider B</em> (e.g. Tumblr), so a template does not need to process pictures from <em>A</em> or <em>B</em> any differently. Items returned by datasources are normalized following the <a href="http://schema.org">schema.org</a> structure, extended with additional properties and types when necessary.</p>
+
+<p>Feeds do not have size constraints. Typical feeds return 20-100 items.</p>
+
+
+<h2>Why develop a datasource?</h2>
+
+<p>You may want to develop a datasource if you are a content provider willing to expose an existing API to factory templates and take advantage of the increased exposure. You may be a service provider willing to sell services based on content and willing to expose that content to templates. You may also be a template developer willing to take advantage of common data processing libraries exposed by the factory to integrate content in a template from a service that is not yet featured in the factory.</p>
+
+<h2>Anatomy of a datasource</h2>
+
+<p>At a minimum, a datasource is a JavaScript module defined with the <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Asynchronous Module Definition (AMD) API</a> mechanism that exposes:</p>
+<ul>
+  <li>a <code>find</code> method that takes query options as parameter and a callback function that gets called with the normalized items retrieved from the remote content provider when request is over</li>
+  <li>a <code>desc</code> property that describes configuration options for the factory</li>
+</ul>
+
+<p>A datasource runs <code>client-side</code> when possible, server-side if not. Client-side execution is usually not possible when the application runs in a regular browser if the datasource needs to issue cross-origin requests, unless JSONP can be used or unless a mechanism such as <a href="http://www.w3.org/TR/cors/">Cross-Origin Resource Sharing</a> is setup.</p>
+
+<p><a href="/doc/develop/datasources">Datasources</a> and <a href="/doc/develop/options">configuration settings</a> selected by users are exposed to templates through a <code>Joshfire.factory</code> global object.</p>
+
+<h2>A minimal datasource</h2>
+
+<p>A minimal "Hello world!" datasource is a single JavaScript file of the form:</p>
+<pre><code class="javascript">define([], function () {
+  return {
+    // Description of the datasource
+    desc: {
+      "options": {
+        "schema": {
+          "user": {
+            "title": "User name",
+            "type": "string",
+            "default": "man"
+          }
+        }
+      },
+      "runAtClient": "enable"
+    },
+
+    // Returns a single Hello World item
+    // Note items are returned as an array in an "entries" property
+    find: function (query, callback) {
+      var user = (query &amp;&amp; query.filter) ? query.filter.user : "man";
+      return callback(null, {
+        entries: [
+          {
+            "@type": "Thing",
+            "name": "Hello " + user
+          }
+        ]
+      });
+    }
+  };
+});</code></pre>
+
+<p>This datasource uses a single item whose title is a "hello" message based on the the option value to return a "Hello" returns only one item whose title is based on the configuration value. As for the minimal template example, this example is essentially useless. The <a href="/doc/datasources/prepare">datasource documentation</a> explains how to develop and integrate useful datasources.</p>

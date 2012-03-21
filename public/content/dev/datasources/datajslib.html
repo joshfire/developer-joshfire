@@ -1,0 +1,185 @@
+<h1>The <code>datajslib</code> library</h1>
+
+<p>The <code>datajslib</code> library exposes a series of libraries that you may want to use to ease the development of your datasource. The library is defined as a <a href="http://requirejs.org/docs/plugins.html">RequireJS plugin</a>: to use one of the underlying libraries, simply prefix its name with <code>datajslib!</code> and add it to the list of dependencies of your datasource. For instance, the following code uses <code>http</code> and <code>underscore</code>:</p>
+<pre><code class="javascript">define(['datajslib!http', 'datajslib!underscore'], function (http, _) {
+  // Datasource code can now access properties and methods of http and _
+});</code></pre>
+
+<p>All of the libraries defined here run client-side as well as server-side. The underlying code may not be the same for client-side execution and server-side execution. The Factory switches
+to the appropriate version automatically.</p>
+
+
+<h2 id="http"><code>http</code>: AJAX requests</h2>
+
+<p>The HTTP module exposes a <code>request</code> method that makes it easy to issue asynchronous HTTP requests. It is a higher-level wrapper around the usual <a href="http://www.w3.org/TR/XMLHttpRequest/">XMLHttpRequest</a> object in a browser environment that supports JSONP requests.</p>
+
+<h3 id="http-request">The <code>request</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Performs an asynchronous HTTP (Ajax) request</dd>
+
+  <dt>Parameters</dt>
+  <dd>The function takes two arguments:
+    <ul>
+      <li><code>params</code>: an object that implements some of the properties of the <code>settings</code> parameter of <a href="http://api.jquery.com/jQuery.ajax/"><code>$.ajax</code> in jQuery</a>. Supported properties are <code>data</code>, <code>dataType</code>, <code>jsonp</code>, <code>jsonpCallback</code>, <code>type</code> and <code>url</code>.</li>
+      <li><code>callback</code>: a callback function called once the response has been received. The callback function receives the error as first parameter or <code>null</code> if all went fine, and the response body as second parameter unless the request was a JSON request. In that case, the function parses the JSON content received and returns the resulting object.</li>
+    </ul>
+  </dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">http.request({
+  url: 'http://example.org/feed.json',
+  dataType: 'jsonp'
+}, function (err, data) {
+  if (err) {
+    // An error occurred
+  }
+  else if (data) {
+    // data contains the resulting object
+    if (data.<em>foo</em>) {
+    }
+  }
+});</code></pre></dd>
+</dl>
+
+
+<h2 id="async"><code>async</code>: Asynchronous helper methods</h2>
+
+<p>This library exposes the <a href="">Async.js</a> open-source module. This utility module provides straightforward, powerful functions for working with asynchronous JavaScript.</p>
+
+
+<h2 id="underscore"><code>underscore</code>: Utility toolbelt</h2>
+
+<p>This library exposes the <a href="http://documentcloud.github.com/underscore/">Underscore</a> utility-belt. Underscore is a small (less than 4Kb once minified and gzipped) library that provides 60-odd functions to parse and manipulate common structures (collections, arrays, objects). Using underscore is recommended to increase compatibility. For instance <code>array.forEach</code> may not be supported in all browsers. Using <code>_.each</code> guarantees that your code runs everywhere.</p>
+
+<h2 id="htmlparser"><code>htmlparser</code>: HTML/XML/RSS parsing</h2>
+
+<p>Since the code may run client-side or server-side, you cannot assume that the environment features an HTML/XML parser. In particular, regular DOM manipulation techniques are not available. The <code>htmlparser</code> library exposes the <a href="https://github.com/tautologistics/node-htmlparser/">node-htmlparser</a> parser, a forgiving HTML/XML/RSS parser written in JavaScript that runs client-side and server-side.</p>
+
+<p>Use this library to process data returned as XML, XML or HTML. Note that support for this library may be discontinued in the future as we investigate other ways to support client-side/server-side HTML parsing techniques.</p>
+
+<h2 id="iso8601"><code>iso8601</code>: Date manipulation</h2>
+
+<p>Many content providers return dates that are follow a subset of the <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> format. Although latest versions of JavaScript (1.8.5+) include support for such dates, they are not yet supported in all browsers. This module exposes methods to convert a date represented as an ISO 8601 string to a JavaScript <code>Date</code> object, and vice versa.</p>
+
+<h3 id="iso8601-toDate">The <code>toDate</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Returns a Date object that matches the given ISO8601 string.</dd>
+
+  <dt>Parameters</dt>
+  <dd>The function expects a string as argument that follows a subset of the ISO 8601 format, typically dates such as <code>YYYY-MM-DDThh:mm:ss.dddZ</code> (some of the fields are optional). Timezone offsets are supported, for instance <code>2012-03-21T10:09:00+01:00</code>.
+    <br/>If the string only specifies a day but not time, the string is interpreted as a local (local for the system where the code is run) date whose time is midnight. That is consistent with the way <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date/parse">dates are parsed</a> in JavaScript.</dd>
+
+  <dt>Returns</dt>
+  <dd>The JavaScript Date object that matches the given ISO 8601 string, null if the date could not be parsed.</dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">var d = iso8601.toDate('2012-03-21T10:09:00+01:00');
+var year = d.getUTCYear();</code></pre></dd>
+</dl>
+
+<h3 id="iso8601-fromString">The <code>fromString</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Returns an ISO 8601 string representation of the date given as an RFC822 date (or an ISO 8601 string).</dd>
+
+  <dt>Parameters</dt>
+  <dd>The function expects a string as argument that follows the <a href="http://tools.ietf.org/html/rfc2822#section-3.3">RFC822</a> format (or that already follows the ISO 8601 format).</code>.</dd>
+
+  <dt>Returns</dt>
+  <dd>The ISO 8601 representation of the given string, an empty string if the date could not be parsed.</dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">var d = iso8601.fromString('Wed, 21 Mar 12 10:09:00 +0100');
+// d now contains the string '2012-03-21T10:09:00+0100'</code></pre></dd>
+</dl>
+
+<h3 id="iso8601-fromDate">The <code>fromDate</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Returns the ISO8601 string representation of the given Date object</dd>
+
+  <dt>Parameters</dt>
+  <dd>The function expects a Date object as argument</dd>
+
+  <dt>Returns</dt>
+  <dd>The ISO 8601 representation of the given date, serialized as a UTC date.
+    <br/>Milliseconds are only returned when different from zero.</dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">var d = Date.now();
+var dstr = iso8601.fromDate(d);
+// dstr is a string of the form 'YYYY-MM-DDThh:mm:ss.dddZ' with the current date</code></pre></dd>
+</dl>
+
+<h3 id="iso8601-fromDateNoTime">The <code>fromDateNoTime</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Returns the ISO8601 string representation of the given Date object, omitting the time part.
+    <br/><br/>The method outputs the local day when the local time evaluates to zero. The method outputs the UTC day otherwise. This apparently weird rule allows to stick to the "right" day if the author created the date with:
+    <br/> <code>new Date("21 Apr 1997");</code>
+    <br/><br/>This method should only really be used with dates created without time counterpart.
+  </dd>
+
+  <dt>Parameters</dt>
+  <dd>The function expects a Date object as argument</dd>
+
+  <dt>Returns</dt>
+  <dd>The ISO 8601 representation of the given date without time. In other words, a string of the form 'YYYY-MM-DD'.
+  </dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">var d = Date.now();
+var dstr = iso8601.fromDateNoTime(d);
+// dstr is a string of the form 'YYYY-MM-DD' with the current date</code></pre></dd>
+</dl>
+
+<h3 id="iso8601-toDuration">The <code>toDuration</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Returnhttps://github.com/tautologistics/node-htmlparser/s the number of milliseconds that correspond to the given ISO8601 duration.
+  </dd>
+
+  <dt>Parameters</dt>
+  <dd>The function expects an ISO 8601 string that represents a duration as argument.
+    <br/>Note the function is restricted to durations of the form <code>PTnnHnnMnnS</code> for the time being.</dd>
+
+  <dt>Returns</dt>
+  <dd>The duration in milliseconds</dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">var dur = iso8601.toDuration('PT01H23M45S');
+// dur is now the number 5025000 [ = (1*3600 + 23*60 + 45) * 1000 ]</code></pre></dd>
+</dl>
+
+<h3 id="iso8601-fromDuration">The <code>fromDuration</code> method</h3>
+<dl>
+  <dt>Description</dt>
+  <dd>Returns the ISO8601 representation of the given duration.
+  </dd>
+
+  <dt>Parameters</dt>
+  <dd>The duration in milliseconds</dd>
+
+  <dt>Returns</dt>
+  <dd>The ISO 8601 representation of the given duration.
+    <br/>The function is not fully generic and only generates durations in the form <code>PTnnHnnMnnS</code> (no year, month or day)</dd>
+
+  <dt>Example</dt>
+  <dd><pre><code class="javascript">var dur = iso8601.fromDuration(5025000);
+// dur is now the string 'PT01H23M45S'</code></pre></dd>
+</dl>
+
+<h2 id="more">Extending the list</h2>
+
+<p>You may wonder why a particular library is missing from the list. Main reasons are usually that:</p>
+<ul>
+  <li>the library cannot be used because it runs client-side or server-side but not in both contexts</li>
+  <li>the library is rather large for inclusion in a Web application that needs to run in constrained environments (mobile, TV, etc.)</li>
+  <li>the license of the library does not allow its inclusion in the datajslib (MIT, Apache, or equivalent license needed).</li>
+</ul>
+
+<p>That said, we may also simply have missed a library that could be particularly useful to normalize data. Please <a href="/support">get in touch</a> if you think we should be adding another one to the list.</p>
+
+<p>You may be tempted to use your a particular library that better suits your needs anyway. Feel free to do so if the library exposes functionalities that are different from the above libraries. You should stick to the above list otherwise. Using shared libraries allows to reduce the total size of the code that ships with the application because templates typically consume more than one datasource.</p>

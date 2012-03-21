@@ -1,0 +1,82 @@
+<h1>Datasource operators</h1>
+
+<p>On top of converting items to a structure that follows <a href="http://schema.org">schema.org</a>, there are a number of operations that you might want to perform on the resulting feed, including:</p>
+<ul>
+  <li>sorting items according to a property</li>
+  <li>filtering items based on some condition</li>
+  <li>handle <code>skip</code> and <code>limit</code> options</li>
+  <li>retrieve subitems taken from the value of a given property</li>
+  <li>extend items with information about links they reference</li>
+  <li>extract a thumbnail for the item from the item's content</li>
+</ul>
+
+<p>Such operations are not specific to a particular feed of items. To save space, the code of these operations should be shared among datasources. That is the main purpose of operators.</p>
+
+<p>As much as possible, you should actually leave these operations out of the code of your datasource. In a near future, the Factory will feature a mode that gives Factory users the possibility to apply a series of operators to a given datasource, e.g. to force the order of the items in a feed.</p>
+
+<h2 id="using">Using operators</h2>
+
+<p>All operators are exposed by the <code>datajslib</code> library. To use an operator, simply add it to the list of dependencies of your datasource:</p>
+<pre><code class="javascript">define(['datajslib!sort'], function (sort) {
+  // You may now use the sort operator
+});</code></pre>
+
+<p>Operators apply to feeds whose structure follows schema.org. They feature a <code>process</code> method that takes as parameters:</p>
+<ul>
+  <li>a list of items normalized according to schema.org;</li>
+  <li>a query object. Specific operator options are to be passed in <code>query.filter</code>;</li>
+  <li>a callback function that receives the error if one occurred and the result of the processing.</li>
+</ul>
+
+<p>Operators may run asynchronously.</p>
+
+
+<h2 id="sort">The <code>sort</code> operator</h2>
+
+<p>The <code>sort</code> operator may be used to sort items in a feed according to a property or a set of properties. It expects the name of a property in a <code>field</code> query parameter, possibly prefixed with a <code>-</code> sign to sort using descending order.</p>
+
+<p>The <code>field</code> query parameter may also be given the string <code>special!date</code> to sort items according to the first date found in the list of properties <code>datePublished</code>, <code>dateModified</code>, <code>dateCreated</code>, <code>uploadDate</code>, <code>startDate</code>, <code>endDate</code>, <code>datePosted</code>, <code>foundingDate</code>, <code>birthDate</code> and <code>deathDate</code>.</p>
+
+<h3 id="sort-example">Example</h3>
+
+<pre><code class="javascript">define(['datajslib!sort'], function (sort) {
+  return {
+    desc: {
+      "options": {},
+      "runAtClient": "enable"
+    },
+
+    find: function (query, callback) {
+      // Generate a fake feed
+      var feed = {
+        entries: [
+          {
+            "itemType": "Thing",
+            "url": "http://example.org/1",
+            "name": "First item",
+            "description": "A first item in the list."
+          },
+          {
+            "itemType": "Thing",
+            "url": "http://example.org/2",
+            "name": "Second item",
+            "description": "A second item in the list."
+          }
+        ]
+      };
+
+      // Prepare sort request
+      var sortquery = {
+        filter: {
+          field: '-name'
+        }
+      };
+
+      // Sort feed and return the result
+      sort.process(feed, sortquery, function (err, sorted) {
+        // Second item appears before first item in sorted field
+        return callback(err, sorted);
+      });
+    }
+  };
+});</code></pre>

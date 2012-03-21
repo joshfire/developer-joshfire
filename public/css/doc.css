@@ -158,3 +158,16 @@ pre code {
 pre code a {
   color: inherit !important;
 }
+
+dl {
+  margin-left: 1em;
+}
+
+dt {
+  text-decoration: underline;
+}
+
+dd {
+  margin-left: 1em;
+  margin-bottom: 0.5em;
+}
