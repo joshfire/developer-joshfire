@@ -16,7 +16,20 @@
 
 <p>The Factory includes a "custom datasource" mode where you may copy and paste the code of your datasource and use it as a regular datasource that runs client-side and gets deployed with your application. This mode is particularly useful during development to debug the code of your datasource.</p>
 
-<p>Custom datasources are an advanced feature, hidden by default. To access the custom datasource view, @@@.</p>
+<p>Custom datasources are an advanced feature, hidden by default. To access the custom datasource view:</p>
+<ol>
+  <li>Create an application in the Factory</li>
+  <li>Access the "Data" pane</li>
+  <li>Replace <code>/data</code> at the end of the address bar with <code>/datasource/new/custom/inline</code></li>
+</ol>
+
+<p>You should see a page with a text area where you can copy and paste the code of your datasource and preview the result.</p>
+
+<figure>
+  <img src="/img/datasource-custom.png" alt="The custom datasource view provides a text area where you can copy and paste the code of your datasource" />
+  <figcaption>Custom datasource form</figcaption>
+</figure>
+
 
 
 <h3 id="amd">Wrap your code in a module and list dependencies</h3>
