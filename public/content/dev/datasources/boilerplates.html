@@ -144,9 +144,8 @@
 <p>Fetching items from a service provider typically involves sending an HTTP request. The <code>http</code> library should be used for that purpose. The following boilerplate requests a URI that returns a JSON object and processes the resulting items.</p>
 
 <pre><code class="javascript">define([
-  'datajslib!http',
-  'datajslib!async'
-], function (http, async) {
+  'datajslib!http'
+], function (http) {
   return {
     /**
      * Description of the datasource
@@ -236,11 +235,31 @@
 
       // Convert items received
       var convertedItems = [];
-      for (var i=0; i&lt;data.results.length; i++) {
-        convertedItems.push(<strong>PROCESS_ITEM</strong>(items[i]));
+      var convertedItem = null;
+      for (var i=0; i&lt;items.length; i++) {
+        convertedItem = self.processItem(items[i], data, query);
+        if (convertedItem) {
+          convertedItems.push(convertedItem);
+        }
       }
       converted.entries = convertedItems;
       return callback(null, converted);
+    },
+
+    /**
+     * Normalizes a feed item according to the schema.org hierarchy
+     *
+     * @function
+     * @param {Object} item The item to normalize
+     * @param {Object} data The feed received which may define additional
+     *   properties needed for conversion purpose
+     * @param {Object} query Query parameters. Datasource specific object.
+     * @return {Object} The normalized item, null if item should be skipped
+     *  for some reason.
+     */
+    processItem: function (item, data, query) {
+      // <strong>TODO: this is where the actual conversion should take place</strong>
+      return item;
     },
 
     /**
