@@ -37,6 +37,7 @@
           "user": {
             "title": "User name",
             "type": "string",
+            "required": true,
             "default": "man"
           }
         }
@@ -47,7 +48,7 @@
     // Returns a single Hello World item
     // Note items are returned as an array in an "entries" property
     find: function (query, callback) {
-      var user = (query &amp;&amp; query.filter) ? query.filter.user : "man";
+      var user = query.filter.user;
       return callback(null, {
         entries: [
           {
