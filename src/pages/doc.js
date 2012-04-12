@@ -4,7 +4,7 @@ Joshfire.define(['src/page.common', 'joshfire/class', 'joshfire/vendor/underscor
       var self = this;
 
       //Force latest
-      args.params.version = "dev";
+      //args.params.version = "dev";
 
       console.log('PARAMS',args);
       if (!args.params.path) args.params.path = '';
