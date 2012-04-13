@@ -19,6 +19,7 @@
     "my",
     "shiny"
   ],
+  "<a href="#homepage">homepage</a>": "http://example.org/my-template",
   "<a href="#contributors">contributors</a>": [
     {
       "name": "Super Ego",
@@ -79,7 +80,19 @@
           "type": "textarea"
         }
       ]
-    }
+    },
+    "<a href="#libraries">libraries</a>": [
+      {
+        "name": "Joshfire Framework",
+        "homepage": "http://framework.joshfire.com",
+        "licenses": [
+          {
+            "type": "MIT",
+            "url": "https://raw.github.com/joshfire/joshfire-framework/master/LICENSE"
+          }
+        ]
+      }
+    ]
   }
 }</code></pre>
 
@@ -172,6 +185,22 @@
 </dl>
 
 
+<h3 id="homepage"><code>homepage</code></h3>
+
+<dl>
+  <dt>Description</dt>
+  <dd>URL of the Web site that describes the template</dd>
+  <dt>Usage</dt>
+  <dd>The factory will include a link to the home page of the template in the template's detailed view.</dd>
+  <dt>JSON type</dt>
+  <dd>A string that represents a URI.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"homepage": "http://example.org/my-example"</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>No</dd>
+</dl>
+
+
 <h3 id="contributors"><code>contributors</code></h3>
 
 <dl>
@@ -231,7 +260,8 @@
   <dd>The factory displays the information next to the template.</dd>
   <dt>JSON type</dt>
   <dd>An array of objects, where each object has a <code>type</code> property, a string that specifies the type of license, and a <code>url</code> property, the URL of the corresponding license text.
-  <br/>If the license is in the list of <a href="http://www.opensource.org/licenses/alphabetical">approved open source initiative licenses</a>, the <code>type</code> property must be the abbreviation of the license when available (defined between parentheses in the list) or the license's full name as it appears on the list.</dd>
+  <br/>If the license is in the list of <a href="http://www.opensource.org/licenses/alphabetical">approved open source initiative licenses</a>, the <code>type</code> property must be the abbreviation of the license when available (defined between parentheses in the list) or the license's full name as it appears on the list.
+  <br/>The URL may be relative to the root of the template's package.</dd>
   <dt>Example</dt>
   <dd><pre><code class="json">"licenses": [
   {
@@ -550,4 +580,32 @@
 }</code></pre></dd>
   <dt>Required?</dt>
   <dd>No</dd>
+</dl>
+
+
+<h3 id="libraries"><code>libraries</code></h3>
+
+<dl>
+  <dt>Description</dt>
+  <dd>List of open-source libraries used within the template</dd>
+  <dt>Usage</dt>
+  <dd>The factory renders the list of libraries in the template's details view, including links to the homepage of the libraries and to the license(s) under which they are made available.</dd>
+  <dt>JSON type</dt>
+  <dd>An object that follows the same <a href="#structure">structure</a> as the root level of the manifest file, restricted to generic description parameters. Most important properties are <code><a href="#name">name</a></code>, <code><a href="#description">description</a></code>, <code><a href="#homepage">homepage</a></code> and <code><a href="#licenses">licenses</a></code>.</dd>
+  <dt>Example</dt>
+  <dd><pre><code class="json">"libraries": [
+  {
+    "name": "Joshfire framework",
+    "description": "The first open source multi-device development framework.",
+    "homepage": "http://framework.joshfire.com",
+    "licenses": [
+      {
+        "type": "MIT",
+        "url": "https://raw.github.com/joshfire/joshfire-framework/master/LICENSE"
+      }
+    ]
+  }
+]</code></pre></dd>
+  <dt>Required?</dt>
+  <dd>The section is required when the template uses or builds upon open-source libraries.</dd>
 </dl>
