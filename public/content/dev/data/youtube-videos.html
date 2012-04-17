@@ -1,16 +1,26 @@
-<h1>Youtube data-source</h1>
+<h1>Youtube data source</h1>
 
 <h2>Description</h2>
+<img src="/img/data/data-icons/youtube-x80.png" alt="Youtube datasource icon" />
+<p>
+	The Youtube data source returns a list of videos. To play videos, templates should have a video player, it is the case of many templates fromthe Factory.
+<br/>
+	If you want to publish your own videos, you first have to upload them to Youtube, and thus have a Google account.
+	Only videos published publicly on Youtube can be fetched.
+</p>
 
 <h2>Configuration</h2>
 <p>First, you have to choose how you want to search your results, available options are:</p>
 <ul>
-	<li>Playlist</li>
 	<li>Text</li>
+	<li>Playlist</li>
 	<li>Username</li>
 </ul>
 
 <p>If you want to keep a total control on the video displayed in your application, we encourage you to use the "Playlist" search and to create your own playlist.</p>
+
+<h3>Search by Text</h3>
+<p>Enter in the "<i>Search text</i>" field the keyword you want to search for. The given results will be the results Youtube returns for this keyword, sorted by relevance.</p>
 
 <h3>Search by Playlist (recommended)</h3>
 <p>Enter in the "<i>Playlist URL</i>" field the URL of a Youtube playlist created by you or someone else. A playlist URL looks like this: <code>http://www.youtube.com/playlist?list=PL3394620DFBD39343</code></p>
@@ -46,7 +56,4 @@
 
 <h3>Search by Username</h3>
 <p>Enter a given Youtube username, videos sorted by upload date will be listed. Your youtube username can be found on the top right of the Youtube screen.</p>
-
-<h3>Search by Text</h3>
-<p>Enter in the "<i>Search text</i>" field the keyword you want to search for. The given results will be the results Youtube returns for this keyword, sorted by relevance.</p>
 
