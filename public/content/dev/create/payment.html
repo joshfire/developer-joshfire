@@ -1,0 +1,64 @@
+<h1>Payment page</h1>
+
+<p>
+	Before being able to deploy your application, you need to purchase all the items that require a payment and are used in this deploy.
+</p>
+
+<p>
+	Internally, we use the very secure <a href="http://recurly.com/">Recurly</a> as our payment backend, which means that Joshfire will never store your billing information. The wire transferts are processed directly by <a href="http://www.wirecard.com/">Wirecard</a>. These two providers are trusted by big international players. We hope you can trust us as much as we trust them.
+</p>
+
+<h2>The billing page</h2>
+<p>
+	This page lists all the item that you installed and that require a payment. You will need to complete this purchase before being able to use any of these items in a deploy. Some items are "one-time" payments, such as the templates, whereas some others have a subscription billing method, wuch as hosting fees for example.
+</p>
+
+<p>
+	A subscription can be paid monthly or yearly. If you subscribe to a subscription, you will automatically be charged at every subscription period and it will be automatically renewed unless you unsubscribe. You can unsubscribe a subscription by deleting the corresponding deploy. Beware that deleting a deploy will break your deployed application.
+</p>
+
+<img src="/img/factory-payment-notax.png" alt="payment page" />
+
+<p>
+	Price is displayed excluding taxes. If you already added your billing information and if you are located in a country where V.A.T. applies, you will see the price with V.A.T. at the bottom of the table. This price will be charged to you when you checkout.
+</p>
+
+<h2>Add your billing information</h2>
+<p>
+	If you access this page for the first time, you first need to add your billing information into our secure system. To do so, click on the blue "Add your billing info" button.
+</p>
+
+<img src="/img/factory-addbillinginfo.png" alt="the add your billing info button" />
+
+<p>
+	A new page opens, it is hosted on recurly.com, our secure payment backend. You can see at the top right your email address This confirms that you are currently logged in.
+</p>
+<img src="/img/factory-recurlypage.png" alt="" />
+<p>
+	The next step is to add your billing information, click the "<i>Update Billing Information</i>" button.
+</p>
+<img src="/img/factory-recurlycreditcardpage.png" alt="" />
+<p>
+	On this page, you need to enter valid billing information. If you are an individual and don't have a <i>VAT Number</i>, leave this field blank. Enter your name, your credit card information and your address. Validate by clicking on the "<i>Update Billing Information</i>" green button.
+	<br/>
+	If no issues were detected with your payment information, you will now see that your account has a credit card configured.
+</p>
+<!-- <img src="/img/factory-recurlywithccpage.png" alt="" /> -->
+
+<p>
+	Now you have to close this page and go back to the Joshfire Factory. The previously blue button should be replaced with a green "<i>Checkout</i>" button.
+</p>
+
+<h2>Checkout</h2>
+
+<img src="/img/factory-payment-tax.png" alt="payment page" />
+
+<p>
+	If you just entered your billing information or if you already did it before, you will see a green "<i>Checkout</i>" button.
+</p>
+<img src="/img/factory-checkout.png" alt="the Checkout button" />
+<p>
+	To the left of this button, you can read the last digits of the credit card that will be charged. If you want to change this payment method, go to your user account page.
+	<br/>
+	Click the green "<i>Checkout</i>" button to validate your payment. There is no configuration step. A loader should appear in the button. Your account will be charged with the amount displayed in the <i>Total</i> row. If the payment cannot be completed (because your credit card has expired for example), a red error message will be displayed at the top of the page. If the payment was accepted, a green confirmation message will be displayed at the top of the page and you will be redirected to the <a href="/doc/create/deploy">deploy page</a>, where you will be able to complete the deployment of your application.
+</p>
