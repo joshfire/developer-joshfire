@@ -1,0 +1,75 @@
+<h1>iOS Build</h1>
+
+<h2>Description</h2>
+
+<p>
+	The <i>iOS build</i> deploy lets you build your application into a native iOS application. These native iOS applications can then be installed as real applications on iPhones, iPods and iPads. You must be aware of two important points:
+<p>
+<ul>
+	<li>You should have access to an <a href="https://developer.apple.com/devcenter/ios/index.action">iOS developer account</a> with admin rights. Which means that you or your team will have to pay $99 per year to Apple.</li>
+
+	<li>You will download the application but you still need to do the submission to the Apple App Store.</li>
+</ul>
+<p>
+	The App Store submission is a task that is not automated. Joshfire offers its services to do it for you, look for the "<i>App Store</i>" deploy on the deploy page.
+</p>
+
+<h2>Configuration</h2>
+
+<p>
+	The four configuration parameters are very important for your application to run on your device:
+</p>
+
+<h3>Package name</h3>
+
+<p>
+	It is an unique identifier for your application, preferably in reverse URI format (such as com.[companyname].[appname]). The package name should compatible with the configuration files you have to upload next.
+</p>
+
+<h3>Certificate (p12) file and Certificate password</h3>
+
+<p>
+	If you haven't done it before, you have to create a new certificate. this operation is done using the <i>Keychain Access</i> tool on your Mac. Follow the instructions on <a href="https://developer.apple.com/ios/my/certificates/create.action">the Certificate creation page</a>.
+</p>
+
+<h3>Provisioning profile</h3>
+<figure>
+  <img src="/img/factory-deploy-iosbuild-devcenter-provisioning.png" alt="screenshot of the iOS dev center" />
+  <figcaption>the iOS dev center, click on the Provisioning Portal</figcaption>
+</figure>
+
+<p>
+	The provisioning profile links your application to your certificates and your test devices. To create a provisioning profile, log-in with your iOS developper admin account, go to the <i>Provisioning Portal</i> and select the <i>Provisioning</i> tab.
+</p>
+
+<figure>
+  <img src="/img/factory-deploy-iosbuild-devcenter-provisioning-download.png" alt="Screenshot of the Provisioning Portal" />
+  <figcaption>Create a provisioning profile from the Provisioning Portal</figcaption>
+</figure>
+
+<p>
+	You will need to <a href="https://developer.apple.com/ios/manage/bundles/howto.action">create App IDs</a> and to <a href="https://developer.apple.com/ios/my/devices/howto.action">add devices</a> to this profile. It is very important that you select the device on which you want to test your application in thei profile.
+</p>
+
+
+<h2>Testing your downloaded .ipa on your device</h2>
+
+<p>
+	Simply drag and drop your provisioning profile into iTunes and then drag and drop the downloaded .ipa file. The application should appear in the "<i>apps</i>" section of your iTunes "<i>Library</i>". Then, synchronize your device applications to install it on your device.
+</p>
+
+<p>
+	If you cannot synchronize your device applications on this computer (because you are using iCloud for example), you can  use the official <i><a href="http://www.apple.com/support/iphone/enterprise/">iPhone Configuration Utility</a></i> software to install it: Connect your device, add your application by drag and dropping it on the window, and then click the "install" in the device's application list.
+</p>
+
+<figure>
+  <img src="/img/factory-deploy-iosbuild-utility.png" alt="Screenshot of the iPhone Configuration Utility" />
+  <figcaption>the iPhone Configuration Utility</figcaption>
+</figure>
+
+
+<h2>Submitting your application to Apple</h2>
+
+<p>
+	Submittion to the App Store is done using the "<i>Application Loader</i>" utility installed with Xcode. In general you find it in the path "xcode/Applications/Utilities".
+</p>
