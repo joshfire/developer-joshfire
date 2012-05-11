@@ -29,8 +29,15 @@
 <h3>Certificate (p12) file and Certificate password</h3>
 
 <p>
-	If you haven't done it before, you have to create a new certificate. this operation is done using the <i>Keychain Access</i> tool on your Mac. Follow the instructions on <a href="https://developer.apple.com/ios/my/certificates/create.action">the Certificate creation page</a>.
+	If you haven't done it before, you have to create a new certificate. This operation is done using the <i>Keychain Access</i> tool on your Mac. Follow the instructions on <a href="https://developer.apple.com/ios/my/certificates/create.action">the Certificate creation page</a>: In Keychen Access utility, select "Keychen Access > Certificate Assistant > Request a Certificate from a Certficicate Authority". Then Save this request as a file (.certSigningRequest) and upload it to your account.
+<br/>
+	After that the certificate has been issued by Apple, download it (it's a .cer file). Then, double click on this file, the <i>Keychen Access</i> utility opens and you should see your new certificate. Expand it, right click on the private key and select "export". This will save a .p12 file after asking for a password. It is this .p12 file and this password that you have to submit to the configuration form.
 </p>
+
+<figure>
+  <img src="/img/factory-deploy-iosbuild-certificate.png" alt="screenshot of the Keychen Access utility" />
+  <figcaption>Downloading the .p12 private key file from the Keychen Access utility after having imported the certificate file.</figcaption>
+</figure>
 
 <h3>Provisioning profile</h3>
 <figure>
