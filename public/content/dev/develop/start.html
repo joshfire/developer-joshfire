@@ -65,7 +65,7 @@
   <li>Click on the arrow on the right, this should open the preview in a dedicated tab.</li>
   <li>Using "view source", extract the link to the bootstrap script. It should look like:
   <br/><code class="javascript">&lt;script data-joshfire-bootstraped src="/bootstrap/4f2958a5f83d5b3b52000087/4f2973fb89ec2f9d65000077/phone/"&gt;&lt;/script&gt;</code></li>
-  <li>Prefix the address with <code>http://factory.joshfire.com</code> and add it to your template entry point</li>
+  <li>Prefix the address with <code>http://preview.joshfireapps.com</code> and add it to your template entry point</li>
 </ol>
 
 <p>That's it. Now open your template's entry point in a Web browser to test its functionality.</p>
@@ -75,19 +75,19 @@
 <p>If the template you'd like to test is an update to an existing template, and provided the update does not change the manifest file, you do not need to go through the exercise explained above. Instead, you may use the factory to create an application that uses the original template and link to the generated bootstrap script to test the update on your local machine.</p>
 
 <p>Replacing <code><em>[appid]</em></code> with the ID of your application (which appears in the link to the application in the applications list page), the bootstrap script for your template and application is available at:</p>
-<pre><code class="uri">http://factory.joshfire.com/bootstrap/<em>[appid]</em>/auto/auto/</code></pre>
+<pre><code class="uri">http://preview.joshfireapps.com/bootstrap/<em>[appid]</em>/auto/auto/</code></pre>
 
 <p>You can then use the <code>src</code> attribute in the reference to the bootstrap script to test the template locally, for instance:</p>
 <pre><code class="html">&lt;script data-joshfire-bootstrap
-  src="http://factory.joshfire.com/bootstrap/4ea47636d58da375e7000080/auto/auto/"&gt;
+  src="http://preview.joshfireapps.com/bootstrap/4ea47636d58da375e7000080/auto/auto/"&gt;
 &lt;/script&gt;</code></pre>
 
 <p>The factory also allows users to configure templates parameters differently for different families of devices. For instance, factory users may want to bind one of the template's datasources inputs with an RSS feed that only contains smaller images and shorter abstracts on mobile phones, while they may prefer to see more content on desktops.</p>
 
 <p>From a template perspective, the existence of different configuration settings is entirely transparent: the bootstrap script that gets loaded when the Web application starts already exposes the right information for the user's device. To test this possibility during template development, you may replace the last <code>auto</code> in the above mentioned bootstrap generator address with the family name of the device whose configuration settings you'd like to test, for instance:</p>
-<pre><code class="uri">http://factory.joshfire.com/bootstrap/<em>[appid]</em>/auto/<strong>phone</strong>/
-http://factory.joshfire.com/bootstrap/<em>[appid]</em>/auto/<strong>tv</strong>/
-http://factory.joshfire.com/bootstrap/<em>[appid]</em>/auto/<strong>tablet</strong>/
-http://factory.joshfire.com/bootstrap/<em>[appid]</em>/auto/<strong>desktop</strong>/
-http://factory.joshfire.com/bootstrap/<em>[appid]</em>/auto/<strong>object</strong>/</code></pre>
+<pre><code class="uri">http://preview.joshfireapps.com/bootstrap/<em>[appid]</em>/auto/<strong>phone</strong>/
+http://preview.joshfireapps.com/bootstrap/<em>[appid]</em>/auto/<strong>tv</strong>/
+http://preview.joshfireapps.com/bootstrap/<em>[appid]</em>/auto/<strong>tablet</strong>/
+http://preview.joshfireapps.com/bootstrap/<em>[appid]</em>/auto/<strong>desktop</strong>/
+http://preview.joshfireapps.com/bootstrap/<em>[appid]</em>/auto/<strong>object</strong>/</code></pre>
 
