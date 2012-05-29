@@ -1,2 +1,62 @@
 <h1>Import a private template</h1>
-<p>To learn more about templates, <a href="/doc/create/templates">read the template page documentation</a></p>
+<p>
+	The Joshfire Factory lets you import your own templates to build custom applications. Imported templates are private to you, other Factory users will not see them.
+<br/>
+	Your imported private templates can then be found in the template tab, by selecting the <i>private template</i> filter in the sidebar.
+<br/>
+	To learn more about templates development, <a href="/doc/create/templates">read the template documentation page</a>
+</p>
+
+<p>
+	There are two ways to import your custom template into the Factory: <strong>zip upload</strong> or <strong>git import</strong>. If you are not familiar with git, we suggest that you use the <strong>zip upload</strong> option.
+</p>
+
+
+<h2>zip upload</h2>
+<p>
+	Simply package your template code in a <i>.zip</i> archive and upload it into the Factory. Our system will look for a <a href="/dev/ref/package">package.json description file</a>, if it doesn't exist, it will look for a start page named <code>index.html</code>. Then, your template is ready to be used in your application.
+</p>
+
+<h3>Updating the code</h3>
+<p>
+	To update your template code, create a new <i>.zip</i> archive on your computer. Then go to your private template page, click on the "<i>Update via archive upload</i>" button on the right and upload your new archive.
+<br/>
+	Your template code should then be updated. However, applications using this template still run the previous version. You have to go to the <a href="/dev/create/configuration">Configuration</a> tab and then visit the Updates menu.
+</p>
+
+
+<h2>git import</h2>
+<p>
+	The <i>git import</i> method is for advanced users. It requires to use the version control software called <a href="http://git-scm.com/">git</a>.
+	<br/>
+	Using <i>git import</i> requires you to have your <a href="/doc/develop/manifest">package.json manifest file</a> or your <code>index.html</code> file at the root of the repository.
+	<br/>
+	The latest commit of the <code>master</code> branch will be imported as a private template.
+</p>
+
+<h3>Importing a public repository</h3>
+<p>
+	Public repository doesn't require authentification. For public repositories, enter the <strong>git read-only URL</strong> or the <strong>public HTTP address</strong> of your repository. For instance:
+</p>
+<ul>
+	<li><code>git://github.com/joshfire-platform-templates-test/good-repo.git</code></li>
+	<li><code>https://bitbucket.org/joshfire/template-portfolio.git</code></li>
+</ul>
+
+<h3>Importing a private repository</h3>
+<p>
+	A private repository cannot be accessed by the Factory without giving it the rights to do so. We generate an SSH key that you need to add to your private repository.
+<br/>
+	For private repositories, add the <strong>SSH key</strong> that appears on the page to your git repository so that the factory can access it. On GitHub, you can do this from the "Admin / Deploy Keys" menu. On BitBucket, check the "Account / SSH Keys" menu. Then enter the <strong>SSH address</strong> of your repository. For instance:
+</p>
+<ul>
+	<li><code>git@github.com:joshfire-platform-templates-test/good-repo.git</code></li>
+	<li><code>git@bitbucket.org:joshfireplatformtest/template-private.git</code></li>
+</ul>
+
+<h3>Updating the code</h3>
+<p>
+	To update your template code, push your latest commits to the <code>master</code> branch of your git repository. Then go to the page of your private template, and click on the "<i>Update from git</i>" button on the right. The latest code from your git repository will be pulled by the Factory.
+<br/>
+	Your template code should then be updated. However, applications using this template still run the previous version. You have to go to the Configuration tab and then visit the Updates menu.
+</p>
