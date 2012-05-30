@@ -11,9 +11,9 @@ try:
 except:
     import simplejson as json
 
-packageconf = json.load(open("package.json","r"))
+packageconf = json.load(open("package.json", "r"))
 
-env.export_dir = os.path.join(os.path.dirname(__file__),"export")
+env.export_dir = os.path.join(os.path.dirname(__file__), "export")
 
 def prod():
     "Use prod environment"
@@ -28,14 +28,9 @@ def deploy():
     export()
     setup_remote_environment()
     upload_tar_from_export()
-    run('cd %s/releases/%s ; npm install' % (env.path,env.release))
-    run("cd %s/releases/%s ; mv package.json{,.orig} ; node fab_helpers/deploy_package_json.js %s/releases/%s < package.json.orig > package.json""" % (env.path, env.release, env.path, env.release))
+    run('source /home/joshfire/.nvm/nvm.sh ; nvm use v0.4.12 ; cd %s/releases/%s ; npm install' % (env.path, env.release))
     symlink_current_release()
-    haibu_restart()
-
-
-def haibu_restart():
-    run("cd %s/releases/%s; haibu clean; haibu start & HAIBUPID=$! ; sleep 1 ; kill $HAIBUPID ; haibu start" % (env.path,env.release))
+    run("source /home/joshfire/.nvm/nvm.sh ; nvm use v0.4.12 ; cd %s/releases/%s; forever stop joshfire/adapters/node/bootstrap.js; forever start joshfire/adapters/node/bootstrap.js" % (env.path, env.release))
 
 
 def export():
